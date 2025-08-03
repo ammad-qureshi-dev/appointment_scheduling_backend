@@ -1,0 +1,92 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.3'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.diffplug.spotless' version '6.19.0'
+}
+
+group = 'com.spring'
+version = '0.0.1-SNAPSHOT'
+
+
+spotless {
+	java {
+		target 'src/**/*.java'
+		importOrder('java', 'javax', 'com.acme', '', '\\#com.acme', '\\#')
+		removeUnusedImports()
+		eclipse()   // eclipse, prettier, googleJavaFormat
+		formatAnnotations()
+		licenseHeader '/* (C) $YEAR \nBooker App. */'
+	}
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springCloudVersion', "2025.0.0")
+}
+
+dependencies {
+
+	// ================= DEVELOPMENT TOOLS =================
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+
+	// ================= DATABASE =================
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+//	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	runtimeOnly 'org.postgresql:postgresql'
+
+
+	// ================= MESSAGING =================
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+
+	// ================= WEB =================
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+
+	// ================= SECURITY =================
+//	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+
+	// ================= TEMPLATE =================
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+
+	// ================= VAULT =================
+//	implementation 'org.springframework.cloud:spring-cloud-starter-vault-config'
+
+
+	// ================= TESTING =================
+//	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//	testImplementation 'org.springframework.security:spring-security-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

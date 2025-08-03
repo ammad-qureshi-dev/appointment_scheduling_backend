@@ -1,0 +1,28 @@
+spring:
+  session:
+    jdbc:
+      initialize-schema: always
+  datasource:
+    url: jdbc:postgresql://${HOST}:${PORT}/${NAME}?currentSchema=${SCHEMA}
+    username: ${USER_RW}
+    password: ${PWD_RW}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+server:
+  port: 8080
+  error:
+    include-message: always
+logging:
+  level:
+    com.spring.demo: debug
