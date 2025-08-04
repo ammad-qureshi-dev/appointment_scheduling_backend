@@ -18,6 +18,8 @@ public class Company extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID companyId;
 
+    private Long companyShortId;
+
     private String name;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
@@ -27,11 +29,15 @@ public class Company extends BaseEntity{
     private List<Appointment> appointments;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
-    private List<AppointmentService> appointmentServices;
+    private List<Service> services;
 
     @Embedded
     private PhoneNumber phoneNumber;
 
     private String email;
+
+    private String description;
+
+    private String address;
 
 }

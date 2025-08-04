@@ -23,7 +23,7 @@ public class Appointment extends BaseEntity {
     private Company company;
 
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
-    private List<AppointmentService> appointmentServices;
+    private List<Service> services;
 
     @OneToOne
     private Customer customer;

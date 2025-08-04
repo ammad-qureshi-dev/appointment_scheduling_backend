@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table(name = "appointment_service", schema = "booker_app")
 @EqualsAndHashCode(callSuper = true)
-public class AppointmentService extends BaseEntity {
+public class Service extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID appointmentServiceId;
