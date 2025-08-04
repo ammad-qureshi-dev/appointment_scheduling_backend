@@ -1,7 +1,6 @@
 package com.booker_app.backend_service.controllers;
 
-import com.booker_app.backend_service.controllers.request.AddEmployeeRequest;
-import com.booker_app.backend_service.controllers.request.RemoveEmployeeRequest;
+import com.booker_app.backend_service.controllers.request.EmployeeRequest;
 import com.booker_app.backend_service.controllers.response.ResponseData;
 import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
@@ -32,7 +31,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/{companyId}")
-    public ResponseEntity<ServiceResponse<UUID>> addEmployee(@PathVariable UUID companyId, @RequestBody AddEmployeeRequest request) {
+    public ResponseEntity<ServiceResponse<UUID>> addEmployee(@PathVariable UUID companyId, @RequestBody EmployeeRequest request) {
         try {
             var userId = employeeService.addEmployeeToCompany(companyId, request);
             return getServiceResponse(true, userId, HttpStatus.CREATED);
@@ -54,7 +53,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{companyId}")
-    public ResponseEntity<ServiceResponse<Boolean>> removeEmployee(@PathVariable UUID companyId, @RequestBody RemoveEmployeeRequest request) {
+    public ResponseEntity<ServiceResponse<Boolean>> removeEmployee(@PathVariable UUID companyId, @RequestBody EmployeeRequest request) {
         try {
             var isDeleted = employeeService.removeEmployeeFromCompany(companyId, request);
             return getServiceResponse(true, isDeleted, HttpStatus.OK);

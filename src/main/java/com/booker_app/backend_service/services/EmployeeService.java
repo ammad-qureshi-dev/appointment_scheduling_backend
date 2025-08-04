@@ -1,7 +1,6 @@
 package com.booker_app.backend_service.services;
 
-import com.booker_app.backend_service.controllers.request.AddEmployeeRequest;
-import com.booker_app.backend_service.controllers.request.RemoveEmployeeRequest;
+import com.booker_app.backend_service.controllers.request.EmployeeRequest;
 import com.booker_app.backend_service.controllers.response.dto.EmployeeDTO;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.models.Employee;
@@ -33,7 +32,7 @@ public class EmployeeService {
     }
 
     // ToDo: add role logic where only OWNER can add employee
-    public UUID addEmployeeToCompany(UUID companyId, AddEmployeeRequest request) {
+    public UUID addEmployeeToCompany(UUID companyId, EmployeeRequest request) {
         var companyResult = companyRepository.findById(companyId);
         if (companyResult.isEmpty()) {
             throw new ServiceResponseException(COMPANY_NOT_FOUND);
@@ -79,7 +78,7 @@ public class EmployeeService {
     }
 
     // ToDo: add role logic where only OWNER can remove employee
-    public Boolean removeEmployeeFromCompany(UUID companyId, RemoveEmployeeRequest request) {
+    public Boolean removeEmployeeFromCompany(UUID companyId, EmployeeRequest request) {
         var companyResult = companyRepository.findById(companyId);
         if (companyResult.isEmpty()) {
             throw new ServiceResponseException(COMPANY_NOT_FOUND);

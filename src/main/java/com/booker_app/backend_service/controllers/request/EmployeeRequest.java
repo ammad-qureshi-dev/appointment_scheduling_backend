@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddEmployeeRequest {
+public class EmployeeRequest {
     @NonNull
     private String email;
 
