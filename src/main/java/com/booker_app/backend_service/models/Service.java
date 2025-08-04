@@ -18,9 +18,13 @@ public class Service extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private String serviceType;
-    private Double serviceCost;
-    private Double serviceLength;
+    private String name;
+    private String description;
+    private Double price;
+
+    // 1 HOUR, 25 MINUTES, etc
+    private Integer time;
+    private ServiceLength serviceLength;
 
     // Mappings
     @ManyToOne
