@@ -25,4 +25,4 @@ server:
     include-message: always
 logging:
   level:
-    com.spring.demo: debug
+    com.booker_app.backend_service: debug

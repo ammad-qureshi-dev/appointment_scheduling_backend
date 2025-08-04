@@ -24,6 +24,7 @@ public class User extends BaseEntity {
     private String email;
     private LocalDate dateOfBirth;
     private String password;
+    private boolean isVerified;
 
     // Mappings
 }
