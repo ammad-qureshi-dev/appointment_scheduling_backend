@@ -1,14 +1,17 @@
 package com.booker_app.backend_service.controllers;
 
-import com.booker_app.backend_service.controllers.request.NewCompanyRequest;
+import com.booker_app.backend_service.controllers.request.UserRegistrationRequest;
 import com.booker_app.backend_service.controllers.response.ResponseData;
 import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.exceptions.CompanyNameTakenException;
-import com.booker_app.backend_service.services.CompanyService;
+import com.booker_app.backend_service.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,26 +22,26 @@ import static com.booker_app.backend_service.utils.CommonUtils.generateResponseD
 import static com.booker_app.backend_service.utils.Constants.Endpoints.BASE_URL_V1;
 
 @RestController
-@RequestMapping(BASE_URL_V1 + "/company")
-public class CompanyController {
+@RequestMapping(BASE_URL_V1 + "/user")
+public class UserController {
 
-    private final CompanyService companyService;
+    private final UserService userService;
     private final List<ResponseData> responseData = new ArrayList<>();
 
-    public CompanyController(CompanyService companyService) {
-        this.companyService = companyService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ServiceResponse<UUID>> createNewCompany(@RequestBody NewCompanyRequest request) {
+    public ResponseEntity<ServiceResponse<UUID>> registerUser(@RequestBody UserRegistrationRequest request) {
         try {
-            var companyShortId = companyService.createNewCompany(request);
-            return getServiceResponse(true, companyShortId, HttpStatus.OK);
-
+            var userId = userService.registerUser(request);
+            return getServiceResponse(true, userId, HttpStatus.CREATED);
         } catch (CompanyNameTakenException e) {
             responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
         }
 
         return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, responseData);
     }
+
 }

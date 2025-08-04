@@ -19,17 +19,11 @@ public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-
-    @NonNull
     private String fullName;
-
-    @Embedded
-    @NonNull
-    private PhoneNumber phoneNumber;
-
-    @NonNull
+    private String phoneNumber;
     private String email;
     private LocalDate dateOfBirth;
+    private String password;
 
     // Mappings
 }

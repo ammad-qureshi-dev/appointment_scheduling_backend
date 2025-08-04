@@ -6,7 +6,7 @@ import com.booker_app.backend_service.models.Company;
 import com.booker_app.backend_service.repositories.CompanyRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.UUID;
 
 import static com.booker_app.backend_service.controllers.response.ResponseType.BUSINESS_NAME_ALREADY_EXISTS;
 
@@ -19,16 +19,14 @@ public class CompanyService {
         this.companyRepository = companyRepository;
     }
 
-    public Long createNewCompany(NewCompanyRequest request) {
+    public UUID createNewCompany(NewCompanyRequest request) {
         var result = companyRepository.getCompanyByName(request.getName().toLowerCase());
 
         if (result.isPresent()) {
             throw new CompanyNameTakenException(BUSINESS_NAME_ALREADY_EXISTS);
         }
 
-        var companyShortId = generateCompanyShortId();
         var newCompany = Company.builder()
-                .companyShortId(companyShortId)
                 .name(request.getName())
                 .description(request.getDescription())
                 .address(request.getAddress())
@@ -36,14 +34,7 @@ public class CompanyService {
 
         companyRepository.save(newCompany);
 
-        return companyShortId;
+        return newCompany.getId();
     }
 
-    private Long generateCompanyShortId() {
-        Long id;
-        do {
-            id = ThreadLocalRandom.current().nextLong(100_000_000L, 1_000_000_000L); // 9-digit range
-        } while (companyRepository.getCompanyByCompanyShortId(id).isPresent());
-        return id;
-    }
 }

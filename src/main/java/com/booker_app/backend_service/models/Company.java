@@ -20,27 +20,27 @@ public class Company extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String name;
-
-    @Embedded
-    private PhoneNumber phoneNumber;
+    private String phoneNumber;
     private String email;
     private String description;
     private String address;
 
     // Mappings
+    @ToString.Exclude
     @OneToOne
     private Employee owner;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Employee> employees;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appointment> appointments;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Customer> customers;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Service> services;
 
 }

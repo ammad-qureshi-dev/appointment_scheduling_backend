@@ -27,6 +27,6 @@ public class Customer extends BaseEntity {
     @ManyToOne
     private Company company;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appointment> appointments;
 }

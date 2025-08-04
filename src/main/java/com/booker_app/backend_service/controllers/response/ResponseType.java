@@ -12,7 +12,7 @@ public enum ResponseType {
 					"Customer already exists."), CUSTOMER_NOT_FOUND(
 							"Could not find customer."), BUSINESS_NAME_ALREADY_EXISTS(
 									"This business name already exists, please choose another one."), ACCOUNT_EXISTS_WITHIN_BUSINESS(
-											"This account already exists within the business."), BUSINESS_NOT_FOUND(
+											"This account already exists within the business."), COMPANY_NOT_FOUND(
 													"No business was found with that ID.");
 
 	private final String alertMessage;

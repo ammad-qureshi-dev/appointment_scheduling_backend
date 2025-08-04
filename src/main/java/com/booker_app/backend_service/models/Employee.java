@@ -3,7 +3,6 @@ package com.booker_app.backend_service.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -28,5 +27,6 @@ public class Employee extends BaseEntity {
     private User user;
 
     @ManyToOne
+    @ToString.Exclude
     private Company company;
 }
