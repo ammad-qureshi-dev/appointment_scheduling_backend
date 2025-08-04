@@ -1,5 +1,6 @@
 package com.booker_app.backend_service.models;
 
+import com.booker_app.backend_service.utils.StringListConverterUtil;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,19 +16,25 @@ import java.util.UUID;
 @Table(name = "appointment", schema = "booker_app")
 @EqualsAndHashCode(callSuper = true)
 public class Appointment extends BaseEntity {
+
+    // Fields
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID appointmentId;
+    private UUID id;
 
-    @ManyToOne
-    private Company company;
-
-    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
-    private List<Service> services;
-
-    @OneToOne
-    private Customer customer;
+    @Column(name = "services", columnDefinition = "text[]")
+    @Convert(converter = StringListConverterUtil.class)
+    private List<String> services;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+
+    // Mappings
+    @ManyToOne
+    private Company company;
+
+    @ManyToOne
+    private Customer customer;
 }
+
+

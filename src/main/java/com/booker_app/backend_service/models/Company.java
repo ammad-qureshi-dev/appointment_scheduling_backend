@@ -14,13 +14,22 @@ import java.util.UUID;
 @Table(name = "company", schema = "booker_app")
 @EqualsAndHashCode(callSuper = true)
 public class Company extends BaseEntity{
+
+    // Fields
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID companyId;
-
-    private Long companyShortId;
-
+    private UUID id;
     private String name;
+
+    @Embedded
+    private PhoneNumber phoneNumber;
+    private String email;
+    private String description;
+    private String address;
+
+    // Mappings
+    @OneToOne
+    private Employee owner;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<Employee> employees;
@@ -29,15 +38,9 @@ public class Company extends BaseEntity{
     private List<Appointment> appointments;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    private List<Customer> customers;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<Service> services;
-
-    @Embedded
-    private PhoneNumber phoneNumber;
-
-    private String email;
-
-    private String description;
-
-    private String address;
 
 }

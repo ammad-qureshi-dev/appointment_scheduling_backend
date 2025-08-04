@@ -1,8 +1,9 @@
 package com.booker_app.backend_service.models;
 
-public enum EmploymentStatus {
+public enum EmploymentRole {
     OWNER,
     PART_TIME,
     FULL_TIME,
-    VOLUNTEER
+    VOLUNTEER,
+    CUSTOMER
 }

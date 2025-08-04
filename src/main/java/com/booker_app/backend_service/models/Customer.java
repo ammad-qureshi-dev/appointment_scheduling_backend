@@ -3,7 +3,7 @@ package com.booker_app.backend_service.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -15,18 +15,18 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class Customer extends BaseEntity {
 
+    // Fields
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID customerId;
+    private UUID generatedId;
 
-    private String fullName;
+    // Mappings
+    @OneToOne
+    private User user;
 
     @ManyToOne
     private Company company;
 
-    @Embedded
-    private PhoneNumber phoneNumber;
-
-    private LocalDate dateOfBirth;
-
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Appointment> appointments;
 }

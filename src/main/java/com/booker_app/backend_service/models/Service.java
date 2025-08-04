@@ -10,20 +10,19 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "appointment_service", schema = "booker_app")
+@Table(name = "service", schema = "booker_app")
 @EqualsAndHashCode(callSuper = true)
 public class Service extends BaseEntity {
+
+    // Fields
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID appointmentServiceId;
-
-    @ManyToOne
-    private Appointment appointment;
-
-    @ManyToOne
-    private Company company;
-
+    private UUID id;
     private String serviceType;
     private Double serviceCost;
     private Double serviceLength;
+
+    // Mappings
+    @ManyToOne
+    private Company company;
 }

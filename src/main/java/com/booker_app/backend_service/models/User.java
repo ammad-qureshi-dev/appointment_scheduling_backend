@@ -11,22 +11,25 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "employee", schema = "booker_app")
+@Table(name = "user", schema = "booker_app")
 @EqualsAndHashCode(callSuper = true)
-public class Employee extends BaseEntity {
+public class User extends BaseEntity {
 
     // Fields
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID generatedId;
+    private UUID id;
 
-    @Enumerated(EnumType.STRING)
-    private EmploymentRole role;
+    @NonNull
+    private String fullName;
+
+    @Embedded
+    @NonNull
+    private PhoneNumber phoneNumber;
+
+    @NonNull
+    private String email;
+    private LocalDate dateOfBirth;
 
     // Mappings
-    @OneToOne
-    private User user;
-
-    @ManyToOne
-    private Company company;
 }
