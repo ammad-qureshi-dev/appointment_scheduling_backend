@@ -23,4 +23,5 @@ public class AppointmentDTO {
     private CustomerDTO customer;
     private AppointmentStatus appointmentStatus;
     private UUID appointmentId;
+    private String assignedTo;
 }

@@ -25,6 +25,10 @@ public class Appointment extends BaseEntity {
     private LocalDateTime endTime;
     private LocalDate appointmentDate;
 
+    @Builder.Default
+    @Enumerated(value = EnumType.STRING)
+    private AppointmentStatus appointmentStatus = AppointmentStatus.PENDING;
+
     // Mappings
     @ManyToOne
     @ToString.Exclude
@@ -34,9 +38,8 @@ public class Appointment extends BaseEntity {
     @ToString.Exclude
     private Customer customer;
 
-    @Builder.Default
-    @Enumerated(value = EnumType.STRING)
-    private AppointmentStatus appointmentStatus = AppointmentStatus.PENDING;
+    @OneToOne
+    private Employee assignee;
 }
 
 

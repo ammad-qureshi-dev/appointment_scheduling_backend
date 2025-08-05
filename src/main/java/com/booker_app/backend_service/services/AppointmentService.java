@@ -11,6 +11,7 @@ import com.booker_app.backend_service.models.Customer;
 import com.booker_app.backend_service.repositories.AppointmentRepository;
 import com.booker_app.backend_service.repositories.CompanyRepository;
 import com.booker_app.backend_service.repositories.CustomerRepository;
+import com.booker_app.backend_service.repositories.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,11 +26,13 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final CustomerRepository customerRepository;
     private final CompanyRepository companyRepository;
+    private final EmployeeRepository employeeRepository;
 
-    public AppointmentService(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, CompanyRepository companyRepository) {
+    public AppointmentService(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, CompanyRepository companyRepository, EmployeeRepository employeeRepository) {
         this.appointmentRepository = appointmentRepository;
         this.customerRepository = customerRepository;
         this.companyRepository = companyRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     public UUID createAppointment(UUID companyId, UUID customerId, AppointmentRequest request) {
@@ -135,6 +138,19 @@ public class AppointmentService {
         return request.getStatus();
     }
 
+    public Boolean assignAppointmentToEmployee(UUID appointmentId, UUID employeeId) {
+        var appointment = getAppointmentFromDatabase(appointmentId);
+        var employeeOpt = employeeRepository.findById(employeeId);
+        if (employeeOpt.isEmpty()) {
+            throw new ServiceResponseException("Employee not found");
+        }
+
+        // ToDo: check availability of employee
+        appointment.setAssignee(employeeOpt.get());
+        appointmentRepository.save(appointment);
+        return true;
+    }
+
     private Appointment getAppointmentFromDatabase(UUID id) {
         var appointmentOpt = appointmentRepository.findById(id);
         if (appointmentOpt.isEmpty()) {
@@ -154,7 +170,13 @@ public class AppointmentService {
             serviceList = List.of(String.join(",", services));
         }
 
+        String assignee = "UNASSIGNED";
+        if (!Objects.isNull(appointment.getAssignee())) {
+            assignee = appointment.getAssignee().getUser().getFullName();
+        }
+
         return AppointmentDTO.builder()
+                .assignedTo(assignee)
                 .appointmentId(appointment.getId())
                 .appointmentStatus(appointment.getAppointmentStatus())
                 .appointmentDate(appointment.getAppointmentDate())

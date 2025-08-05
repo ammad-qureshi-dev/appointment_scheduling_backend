@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -17,4 +18,5 @@ public class EmployeeDTO {
     private String phoneNumber;
     private String email;
     private LocalDate dateOfBirth;
+    private UUID employeeId;
 }

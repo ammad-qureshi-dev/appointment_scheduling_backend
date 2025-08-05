@@ -19,7 +19,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
 
     @Query("""
             select new com.booker_app.backend_service.controllers.response.dto.EmployeeDTO(
-               E.role, E.user.fullName, E.user.phoneNumber, E.user.email, E.user.dateOfBirth
+               E.role, E.user.fullName, E.user.phoneNumber, E.user.email, E.user.dateOfBirth, E.generatedId
             )
             from Employee E where E.company.id = :companyId""")
     Optional<List<EmployeeDTO>> getAllEmployees(@Param("companyId") UUID companyId);

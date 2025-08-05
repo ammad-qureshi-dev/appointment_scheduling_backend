@@ -77,4 +77,15 @@ public class AppointmentController {
         }
         return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, responseData);
     }
+
+    @PostMapping("/{appointmentId}/assign-to/{employeeId}")
+    public ResponseEntity<ServiceResponse<Boolean>> assignAppointmentToEmployee(@PathVariable("appointmentId") UUID appointmentId, @PathVariable("employeeId") UUID employeeId) {
+        try {
+            var isAssigned = appointmentService.assignAppointmentToEmployee(appointmentId, employeeId);
+            return getServiceResponse(true, isAssigned, HttpStatus.OK);
+        } catch (ServiceResponseException e) {
+            responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
+        }
+        return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, responseData);
+    }
 }
