@@ -36,15 +36,15 @@ public class ServicesService {
         var services = company.getServices();
 
         var currentServicesInStore = services.stream()
-                .map(Service::getName).collect(Collectors.toSet());
+                .map(Service::getName).map(String::toUpperCase).collect(Collectors.toSet());
 
         for (var service : request) {
-            if (currentServicesInStore.contains(service.getName())) {
+            if (currentServicesInStore.contains(service.getName().toUpperCase())) {
                 throw new ServiceResponseException("service already exists");
             }
 
             var newService = Service.builder()
-                    .name(service.getName())
+                    .name(service.getName().toUpperCase())
                     .description(service.getDescription())
                     .price(service.getPrice())
                     .time(service.getTime())

@@ -77,7 +77,7 @@ public class CustomerService {
         }
 
         var company = companyOpt.get();
-        return company.getCustomers().stream().map(Customer::getUser).map(this::convertCustomerToDTO).toList();
+        return company.getCustomers().stream().map(this::convertCustomerToDTO).toList();
     }
 
     public Boolean deleteCustomer(UUID companyId, CustomerRequest request) {
@@ -105,7 +105,14 @@ public class CustomerService {
         return true;
     }
 
-    private CustomerDTO convertCustomerToDTO(User u) {
-        return CustomerDTO.builder().dateOfBirth(u.getDateOfBirth()).fullName(u.getFullName()).email(u.getEmail()).phoneNumber(u.getPhoneNumber()).build();
+    private CustomerDTO convertCustomerToDTO(Customer customer) {
+        var user = customer.getUser();
+        return CustomerDTO.builder()
+                .dateOfBirth(user.getDateOfBirth())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .customerId(customer.getGeneratedId())
+                .build();
     }
 }

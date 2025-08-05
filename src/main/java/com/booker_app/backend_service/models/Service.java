@@ -28,5 +28,6 @@ public class Service extends BaseEntity {
 
     // Mappings
     @ManyToOne
+    @ToString.Exclude
     private Company company;
 }

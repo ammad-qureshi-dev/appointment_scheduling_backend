@@ -1,11 +1,10 @@
 package com.booker_app.backend_service.models;
 
-import com.booker_app.backend_service.utils.StringListConverterUtil;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -21,20 +20,23 @@ public class Appointment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-
-    @Column(name = "services", columnDefinition = "text[]")
-    @Convert(converter = StringListConverterUtil.class)
-    private List<String> services;
-
+    private String services;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private LocalDate appointmentDate;
 
     // Mappings
     @ManyToOne
+    @ToString.Exclude
     private Company company;
 
     @ManyToOne
+    @ToString.Exclude
     private Customer customer;
+
+    @Builder.Default
+    @Enumerated(value = EnumType.STRING)
+    private AppointmentStatus appointmentStatus = AppointmentStatus.PENDING;
 }
 
 

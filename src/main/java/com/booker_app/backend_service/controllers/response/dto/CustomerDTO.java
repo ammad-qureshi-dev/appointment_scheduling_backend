@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -16,4 +17,5 @@ public class CustomerDTO {
     private String phoneNumber;
     private String email;
     private LocalDate dateOfBirth;
+    private UUID customerId;
 }

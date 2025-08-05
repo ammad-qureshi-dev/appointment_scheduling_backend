@@ -25,6 +25,7 @@ public class Customer extends BaseEntity {
     private User user;
 
     @ManyToOne
+    @ToString.Exclude
     private Company company;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
