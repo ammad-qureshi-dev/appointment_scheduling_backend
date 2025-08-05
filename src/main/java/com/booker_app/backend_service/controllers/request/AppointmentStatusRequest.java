@@ -1,3 +1,5 @@
+/* (C) 2025 
+Booker App. */
 package com.booker_app.backend_service.controllers.request;
 
 import com.booker_app.backend_service.models.AppointmentStatus;
@@ -13,6 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppointmentStatusRequest {
-    @Enumerated(EnumType.STRING)
-    private AppointmentStatus status;
+	@Enumerated(EnumType.STRING)
+	private AppointmentStatus status;
 }

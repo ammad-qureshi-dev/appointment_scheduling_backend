@@ -1,9 +1,11 @@
+/* (C) 2025 
+Booker App. */
 package com.booker_app.backend_service.models;
+
+import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.UUID;
 
 @Data
 @Entity
@@ -14,19 +16,19 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class Employee extends BaseEntity {
 
-    // Fields
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID generatedId;
+	// Fields
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private UUID generatedId;
 
-    @Enumerated(EnumType.STRING)
-    private EmploymentRole role;
+	@Enumerated(EnumType.STRING)
+	private EmploymentRole role;
 
-    // Mappings
-    @OneToOne
-    private User user;
+	// Mappings
+	@OneToOne
+	private User user;
 
-    @ManyToOne
-    @ToString.Exclude
-    private Company company;
+	@ManyToOne
+	@ToString.Exclude
+	private Company company;
 }

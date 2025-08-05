@@ -1,3 +1,5 @@
+/* (C) 2025 
+Booker App. */
 package com.booker_app.backend_service.controllers.request;
 
 import lombok.*;
@@ -8,11 +10,9 @@ import lombok.*;
 @AllArgsConstructor
 public class NewCompanyRequest {
 
-    @NonNull
-    private String name;
+	@NonNull private String name;
 
-    private String description;
+	private String description;
 
-    @NonNull
-    private String address;
+	@NonNull private String address;
 }

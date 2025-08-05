@@ -1,3 +1,5 @@
+/* (C) 2025 
+Booker App. */
 package com.booker_app.backend_service.controllers.request;
 
 import com.booker_app.backend_service.models.EmploymentRole;
@@ -10,9 +12,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmployeeRequest {
-    @NonNull
-    private String email;
+	@NonNull private String email;
 
-    @Enumerated(EnumType.STRING)
-    private EmploymentRole role;
+	@Enumerated(EnumType.STRING)
+	private EmploymentRole role;
 }

@@ -1,10 +1,12 @@
+/* (C) 2025 
+Booker App. */
 package com.booker_app.backend_service.models;
-
-import jakarta.persistence.*;
-import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
+
+import jakarta.persistence.*;
+import lombok.*;
 
 @Data
 @Entity
@@ -15,19 +17,19 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class Customer extends BaseEntity {
 
-    // Fields
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID generatedId;
+	// Fields
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private UUID generatedId;
 
-    // Mappings
-    @OneToOne
-    private User user;
+	// Mappings
+	@OneToOne
+	private User user;
 
-    @ManyToOne
-    @ToString.Exclude
-    private Company company;
+	@ManyToOne
+	@ToString.Exclude
+	private Company company;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Appointment> appointments;
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Appointment> appointments;
 }

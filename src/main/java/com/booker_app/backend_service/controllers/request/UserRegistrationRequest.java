@@ -1,9 +1,11 @@
+/* (C) 2025 
+Booker App. */
 package com.booker_app.backend_service.controllers.request;
+
+import java.time.LocalDate;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;
-
-import java.time.LocalDate;
 
 @Data
 @Builder
@@ -12,15 +14,12 @@ import java.time.LocalDate;
 @Embeddable
 public class UserRegistrationRequest {
 
-    @NonNull
-    private String fullName;
+	@NonNull private String fullName;
 
-    @NonNull
-    private String email;
+	@NonNull private String email;
 
-    @NonNull
-    private String password;
+	@NonNull private String password;
 
-    private LocalDate dateOfBirth;
-    private String phoneNumber;
+	private LocalDate dateOfBirth;
+	private String phoneNumber;
 }

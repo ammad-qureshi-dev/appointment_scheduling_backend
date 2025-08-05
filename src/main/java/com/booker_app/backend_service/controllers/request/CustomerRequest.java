@@ -1,3 +1,5 @@
+/* (C) 2025 
+Booker App. */
 package com.booker_app.backend_service.controllers.request;
 
 import lombok.AllArgsConstructor;
@@ -10,6 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomerRequest {
-    private String email;
-    private String phoneNumber;
+	private String email;
+	private String phoneNumber;
 }

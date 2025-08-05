@@ -1,10 +1,12 @@
+/* (C) 2025 
+Booker App. */
 package com.booker_app.backend_service.models;
-
-import jakarta.persistence.*;
-import lombok.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
+
+import jakarta.persistence.*;
+import lombok.*;
 
 @Data
 @Entity
@@ -15,16 +17,16 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity {
 
-    // Fields
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
-    private String fullName;
-    private String phoneNumber;
-    private String email;
-    private LocalDate dateOfBirth;
-    private String password;
-    private boolean isVerified;
+	// Fields
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private UUID id;
+	private String fullName;
+	private String phoneNumber;
+	private String email;
+	private LocalDate dateOfBirth;
+	private String password;
+	private boolean isVerified;
 
-    // Mappings
+	// Mappings
 }

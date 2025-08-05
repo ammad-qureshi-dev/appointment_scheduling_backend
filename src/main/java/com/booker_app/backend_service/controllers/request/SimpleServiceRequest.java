@@ -1,3 +1,5 @@
+/* (C) 2025 
+Booker App. */
 package com.booker_app.backend_service.controllers.request;
 
 import lombok.AllArgsConstructor;
@@ -10,5 +12,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SimpleServiceRequest {
-    private String name;
+	private String name;
 }
