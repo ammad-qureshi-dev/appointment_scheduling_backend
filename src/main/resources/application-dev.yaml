@@ -1,11 +1,9 @@
 spring:
-  profiles:
-    active: dev
   session:
     jdbc:
       initialize-schema: always
   datasource:
-    url: jdbc:postgresql://${HOST}:${PORT}/${NAME}?currentSchema=${SCHEMA}
+    url: jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:6543/postgres?user=postgres.xopngsxwmcxyuhvelbqv&password=${PWD_RW}
     username: ${USER_RW}
     password: ${PWD_RW}
     driver-class-name: org.postgresql.Driver

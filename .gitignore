@@ -38,3 +38,4 @@ out/
 
 # Ignore all application configuration / env files
 src/main/resources/application.properties
+src/main/resources/application-dev.properties
