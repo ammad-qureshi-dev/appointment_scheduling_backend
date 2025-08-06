@@ -19,8 +19,7 @@ import com.booker_app.backend_service.repositories.CustomerRepository;
 import com.booker_app.backend_service.repositories.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
-import static com.booker_app.backend_service.controllers.response.ResponseType.COMPANY_NOT_FOUND;
-import static com.booker_app.backend_service.controllers.response.ResponseType.TIME_SLOT_TAKEN;
+import static com.booker_app.backend_service.controllers.response.ResponseType.*;
 
 @Service
 public class AppointmentService {
@@ -41,7 +40,11 @@ public class AppointmentService {
 	public UUID createAppointment(UUID companyId, UUID customerId, AppointmentRequest request) {
 
 		if (!request.getEndTime().isAfter(request.getStartTime())) {
-			throw new ServiceResponseException("End Time must occur after Start Time");
+			throw new ServiceResponseException(INVALID_APPOINTMENT_REQUEST_TIME);
+		}
+
+		if (request.getAppointmentDate().isBefore(LocalDate.now())) {
+			throw new ServiceResponseException(APPOINTMENT_DATE_IN_PAST);
 		}
 
 		var companyOpt = companyRepository.findById(companyId);
@@ -51,7 +54,7 @@ public class AppointmentService {
 
 		var customerOpt = customerRepository.findById(customerId);
 		if (customerOpt.isEmpty()) {
-			throw new ServiceResponseException("Customer does not exist");
+			throw new ServiceResponseException(CUSTOMER_NOT_FOUND);
 		}
 
 		var appointmentsByDateOpt = appointmentRepository.getAppointmentsByDate(companyId,
@@ -84,7 +87,7 @@ public class AppointmentService {
 		}
 
 		if (appointmentDate.isBefore(LocalDate.now())) {
-			throw new ServiceResponseException("Appointment Date cannot be in the past");
+			throw new ServiceResponseException(APPOINTMENT_DATE_IN_PAST);
 		}
 
 		var appointmentsByDateOpt = appointmentRepository.getAppointmentsByDate(companyId, appointmentDate);
@@ -139,7 +142,7 @@ public class AppointmentService {
 		var appointment = getAppointmentFromDatabase(appointmentId);
 		var employeeOpt = employeeRepository.findById(employeeId);
 		if (employeeOpt.isEmpty()) {
-			throw new ServiceResponseException("Employee not found");
+			throw new ServiceResponseException(EMPLOYEE_NOT_FOUND);
 		}
 
 		// ToDo: check availability of employee
@@ -151,7 +154,7 @@ public class AppointmentService {
 	private Appointment getAppointmentFromDatabase(UUID id) {
 		var appointmentOpt = appointmentRepository.findById(id);
 		if (appointmentOpt.isEmpty()) {
-			throw new ServiceResponseException("Appointment not found");
+			throw new ServiceResponseException(APPOINTMENT_NOT_FOUND);
 		}
 
 		return appointmentOpt.get();

@@ -16,6 +16,7 @@ import com.booker_app.backend_service.repositories.ServicesRepository;
 import org.springframework.stereotype.Component;
 
 import static com.booker_app.backend_service.controllers.response.ResponseType.COMPANY_NOT_FOUND;
+import static com.booker_app.backend_service.controllers.response.ResponseType.SERVICE_ALREADY_EXISTS;
 
 @Component
 public class ServicesService {
@@ -42,7 +43,7 @@ public class ServicesService {
 
 		for (var service : request) {
 			if (currentServicesInStore.contains(service.getName().toUpperCase())) {
-				throw new ServiceResponseException("service already exists");
+				throw new ServiceResponseException(SERVICE_ALREADY_EXISTS);
 			}
 
 			var newService = Service.builder().name(service.getName().toUpperCase())

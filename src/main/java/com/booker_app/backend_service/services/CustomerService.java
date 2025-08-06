@@ -17,6 +17,9 @@ import com.booker_app.backend_service.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import static com.booker_app.backend_service.controllers.response.ResponseType.COMPANY_NOT_FOUND;
+import static com.booker_app.backend_service.controllers.response.ResponseType.CUSTOMER_ALREADY_EXISTS;
+
 @Slf4j
 @Component
 public class CustomerService {
@@ -35,7 +38,7 @@ public class CustomerService {
 	public UUID addCustomer(UUID companyId, CustomerRequest request) {
 		var companyOpt = companyRepository.findById(companyId);
 		if (companyOpt.isEmpty()) {
-			throw new ServiceResponseException("Company not found");
+			throw new ServiceResponseException(COMPANY_NOT_FOUND);
 		}
 
 		var userOpt = userRepository.getUserByPhoneNumberAndEmail(request.getPhoneNumber(), request.getEmail());
@@ -57,7 +60,7 @@ public class CustomerService {
 					.filter(e -> request.getPhoneNumber().equalsIgnoreCase(e.getPhoneNumber())).findFirst();
 
 			if (existingCustomer.isPresent()) {
-				throw new ServiceResponseException("Customer already exists");
+				throw new ServiceResponseException(CUSTOMER_ALREADY_EXISTS);
 			}
 		}
 
@@ -70,7 +73,7 @@ public class CustomerService {
 	public List<CustomerDTO> getAllCustomers(UUID companyId) {
 		var companyOpt = companyRepository.findById(companyId);
 		if (companyOpt.isEmpty()) {
-			throw new ServiceResponseException("Company not found");
+			throw new ServiceResponseException(COMPANY_NOT_FOUND);
 		}
 
 		var company = companyOpt.get();
@@ -80,7 +83,7 @@ public class CustomerService {
 	public Boolean deleteCustomer(UUID companyId, CustomerRequest request) {
 		var companyOpt = companyRepository.findById(companyId);
 		if (companyOpt.isEmpty()) {
-			throw new ServiceResponseException("Company not found");
+			throw new ServiceResponseException(COMPANY_NOT_FOUND);
 		}
 
 		var company = companyOpt.get();

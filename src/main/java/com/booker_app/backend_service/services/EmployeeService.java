@@ -17,7 +17,7 @@ import com.booker_app.backend_service.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import static com.booker_app.backend_service.controllers.response.ResponseType.COMPANY_NOT_FOUND;
+import static com.booker_app.backend_service.controllers.response.ResponseType.*;
 
 @Slf4j
 @Service
@@ -43,13 +43,13 @@ public class EmployeeService {
 
 		var userResult = userRepository.getUserByEmail(request.getEmail());
 		if (userResult.isEmpty()) {
-			throw new ServiceResponseException("User is not registered with this email");
+			throw new ServiceResponseException(UNREGISTERED_USER_EMAIL);
 		}
 
 		var company = companyResult.get();
 		for (var employee : company.getEmployees()) {
 			if (request.getEmail().equals(employee.getUser().getEmail())) {
-				throw new ServiceResponseException("This employee with this email already exists");
+				throw new ServiceResponseException(EMPLOYEE_EMAIL_ALREADY_EXISTS);
 			}
 		}
 
@@ -85,7 +85,7 @@ public class EmployeeService {
 
 		var userOpt = userRepository.getUserByEmail(request.getEmail());
 		if (userOpt.isEmpty()) {
-			throw new ServiceResponseException("User does not exist");
+			throw new ServiceResponseException(USER_NOT_FOUND);
 		}
 
 		var company = companyResult.get();
@@ -100,7 +100,7 @@ public class EmployeeService {
 		var employee = employeeOpt.get();
 
 		if (EmploymentRole.OWNER.equals(employee.getRole())) {
-			throw new ServiceResponseException("User has OWNER role, cannot remove");
+			throw new ServiceResponseException(CANNOT_REMOVE_OWNER);
 		}
 
 		employee.setCompany(null);

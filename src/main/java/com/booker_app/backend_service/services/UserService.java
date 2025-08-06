@@ -10,6 +10,8 @@ import com.booker_app.backend_service.models.User;
 import com.booker_app.backend_service.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import static com.booker_app.backend_service.controllers.response.ResponseType.USER_ALREADY_EXISTS;
+
 @Service
 public class UserService {
 
@@ -22,7 +24,7 @@ public class UserService {
 	public UUID registerUser(UserRegistrationRequest request) {
 		var userResult = userRepository.getUserByEmail(request.getEmail());
 		if (userResult.isPresent()) {
-			throw new ServiceResponseException("User already exists");
+			throw new ServiceResponseException(USER_ALREADY_EXISTS);
 		}
 
 		var newUser = User.builder().email(request.getEmail()).password(request.getPassword())
