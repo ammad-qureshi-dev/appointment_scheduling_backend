@@ -11,6 +11,7 @@ import com.booker_app.backend_service.controllers.response.ResponseData;
 import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.exceptions.CompanyNameTakenException;
+import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.services.CompanyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class CompanyController {
 			var companyShortId = companyService.createNewCompany(request);
 			return getServiceResponse(true, companyShortId, HttpStatus.OK);
 
-		} catch (CompanyNameTakenException e) {
+		} catch (CompanyNameTakenException | ServiceResponseException e) {
 			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
 		}
 

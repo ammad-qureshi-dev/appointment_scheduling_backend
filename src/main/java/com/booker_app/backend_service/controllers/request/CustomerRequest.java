@@ -2,16 +2,14 @@
 Booker App. */
 package com.booker_app.backend_service.controllers.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomerRequest {
+	@NonNull private String fullName;
 	private String email;
 	private String phoneNumber;
 }

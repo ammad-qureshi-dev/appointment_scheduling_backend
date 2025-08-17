@@ -20,6 +20,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	@Query("select U from User U where U.phoneNumber = :phoneNumber")
 	Optional<User> getUserByPhoneNumber(@Param("phoneNumber") String phoneNumber);
 
-	@Query("select U from User U where U.phoneNumber = :phoneNumber or U.email = :email")
+	@Query("select U from User U where (U.phoneNumber is not null and U.phoneNumber = :phoneNumber) or (U.email is not null and U.email = :email)")
 	Optional<User> getUserByPhoneNumberAndEmail(@Param("phoneNumber") String phoneNumber, @Param("email") String email);
 }

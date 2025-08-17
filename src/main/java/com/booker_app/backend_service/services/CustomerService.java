@@ -16,9 +16,9 @@ import com.booker_app.backend_service.repositories.CustomerRepository;
 import com.booker_app.backend_service.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
-import static com.booker_app.backend_service.controllers.response.ResponseType.COMPANY_NOT_FOUND;
-import static com.booker_app.backend_service.controllers.response.ResponseType.CUSTOMER_ALREADY_EXISTS;
+import static com.booker_app.backend_service.controllers.response.ResponseType.*;
 
 @Slf4j
 @Component
@@ -41,33 +41,35 @@ public class CustomerService {
 			throw new ServiceResponseException(COMPANY_NOT_FOUND);
 		}
 
-		var userOpt = userRepository.getUserByPhoneNumberAndEmail(request.getPhoneNumber(), request.getEmail());
-		User newUnverifiedUser = null;
-		if (userOpt.isEmpty()) {
-			// Customers don't necessarily have to have an account, however, we can
-			// pre-emptively create a user for them
-			// and when they do decide to register, we can let them know they have an
-			// account, just need a password
-			var newUser = User.builder().phoneNumber(request.getPhoneNumber()).email(request.getEmail())
-					.isVerified(false).build();
-			userRepository.save(newUser);
-			newUnverifiedUser = newUser;
-		}
-
-		if (userOpt.isPresent()) {
-			var existingCustomer = companyOpt.get().getCustomers().stream().map(Customer::getUser)
-					.filter(e -> request.getEmail().equalsIgnoreCase(e.getEmail()))
-					.filter(e -> request.getPhoneNumber().equalsIgnoreCase(e.getPhoneNumber())).findFirst();
-
-			if (existingCustomer.isPresent()) {
+		var company = companyOpt.get();
+		for (var customer : company.getCustomers()) {
+			var user = customer.getUser();
+			if (isUserAlreadyExists(user, request)) {
 				throw new ServiceResponseException(CUSTOMER_ALREADY_EXISTS);
 			}
 		}
 
-		var newCustomer = Customer.builder().user(userOpt.orElse(newUnverifiedUser)).company(companyOpt.get()).build();
+		Customer newCustomer = null;
+		var storedUser = userRepository.getUserByPhoneNumberAndEmail(request.getPhoneNumber(), request.getEmail());
+		if (storedUser.isPresent()) {
+			newCustomer = Customer.builder().user(storedUser.get()).company(companyOpt.get()).build();
+		} else {
+			var newUser = User.builder().phoneNumber(request.getPhoneNumber()).email(request.getEmail())
+					.fullName(request.getFullName()).isVerified(false).build();
+
+			userRepository.save(newUser);
+			newCustomer = Customer.builder().user(newUser).company(companyOpt.get()).build();
+		}
 
 		customerRepository.save(newCustomer);
 		return newCustomer.getGeneratedId();
+	}
+
+	public CustomerDTO getCustomerByPhoneOrEmail(UUID companyId, CustomerRequest searchRequest) {
+		companyRepository.findById(companyId).orElseThrow(() -> new ServiceResponseException(COMPANY_NOT_FOUND));
+		var customer = customerRepository.getCustomerByPhoneOrEmail(companyId, searchRequest.getPhoneNumber(),
+				searchRequest.getEmail());
+		return customer.map(this::convertCustomerToDTO).orElse(null);
 	}
 
 	public List<CustomerDTO> getAllCustomers(UUID companyId) {
@@ -109,9 +111,19 @@ public class CustomerService {
 	}
 
 	private CustomerDTO convertCustomerToDTO(Customer customer) {
+		if (Objects.isNull(customer)) {
+			return null;
+		}
 		var user = customer.getUser();
 		return CustomerDTO.builder().dateOfBirth(user.getDateOfBirth()).fullName(user.getFullName())
 				.email(user.getEmail()).phoneNumber(user.getPhoneNumber()).customerId(customer.getGeneratedId())
 				.build();
 	}
+
+	private static boolean isUserAlreadyExists(User user, CustomerRequest request) {
+		return (StringUtils.hasLength(request.getPhoneNumber())
+				&& request.getPhoneNumber().equalsIgnoreCase(user.getPhoneNumber()))
+				|| (StringUtils.hasLength(request.getEmail()) && request.getEmail().equalsIgnoreCase(user.getEmail()));
+	}
+
 }

@@ -23,6 +23,8 @@ public class User extends BaseEntity {
 	private UUID id;
 	private String fullName;
 	private String phoneNumber;
+
+	@Column(unique = true)
 	private String email;
 	private LocalDate dateOfBirth;
 	private String password;

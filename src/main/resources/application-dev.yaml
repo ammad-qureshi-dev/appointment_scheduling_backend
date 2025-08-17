@@ -1,14 +1,16 @@
 spring:
   session:
     jdbc:
-      initialize-schema: always
+      initialize-schema: never
   datasource:
-    url: jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:6543/postgres?user=postgres.xopngsxwmcxyuhvelbqv&password=${PWD_RW}
+    url: jdbc:postgresql://${HOST}:${PORT}/postgres?user=${USER_RW}&password=${PWD_RW}&prepareThreshold=0
     username: ${USER_RW}
     password: ${PWD_RW}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
+      # This clears any cached prepared statements before reusing the connection.
+      connection-init-sql: "DISCARD ALL"
   jpa:
     show-sql: false
     hibernate:

@@ -34,20 +34,33 @@ public class CustomerController {
 	@PostMapping("/{companyId}")
 	public ResponseEntity<ServiceResponse<UUID>> addCustomer(@PathVariable("companyId") UUID companyId,
 			@RequestBody CustomerRequest request) {
+		var _responseData = new ArrayList<ResponseData>();
 		try {
 			var customerId = customerService.addCustomer(companyId, request);
 			return getServiceResponse(true, customerId, HttpStatus.CREATED);
 		} catch (ServiceResponseException e) {
-			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
+			_responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.WARNING));
 		}
-		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, responseData);
+		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, _responseData);
 	}
 
 	@GetMapping("/{companyId}/search")
 	public ResponseEntity<ServiceResponse<List<CustomerDTO>>> findAllCustomers(
 			@PathVariable("companyId") UUID companyId) {
 		try {
-			return getServiceResponse(true, customerService.getAllCustomers(companyId), HttpStatus.CREATED);
+			return getServiceResponse(true, customerService.getAllCustomers(companyId), HttpStatus.OK);
+		} catch (ServiceResponseException e) {
+			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
+		}
+		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, responseData);
+	}
+
+	@GetMapping("/{companyId}/search/single")
+	public ResponseEntity<ServiceResponse<CustomerDTO>> findCustomerBySearch(@PathVariable("companyId") UUID companyId,
+			@RequestBody CustomerRequest request) {
+		try {
+			var response = customerService.getCustomerByPhoneOrEmail(companyId, request);
+			return getServiceResponse(true, response, HttpStatus.OK);
 		} catch (ServiceResponseException e) {
 			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
 		}

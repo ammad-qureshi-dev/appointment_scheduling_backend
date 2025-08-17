@@ -20,6 +20,7 @@ import static com.booker_app.backend_service.controllers.response.ServiceRespons
 import static com.booker_app.backend_service.utils.CommonUtils.generateResponseData;
 import static com.booker_app.backend_service.utils.Constants.Endpoints.BASE_URL_V1;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping(BASE_URL_V1 + "/user")
 public class UserController {
