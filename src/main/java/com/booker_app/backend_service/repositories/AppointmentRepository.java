@@ -39,4 +39,17 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 			""")
 	Optional<List<Appointment>> getAppointmentsByDate(@Param("companyId") UUID companyId,
 			@Param("appointmentDate") LocalDate appointmentDate);
+
+	@Query(value = """
+			select *
+			from booker_app.appointment a
+			where a.customer_generated_id = :customerId
+			and a.company_id = :companyId
+			and a.end_time < now()
+			order by a.end_time desc
+			limit 1
+			""", nativeQuery = true)
+	Optional<Appointment> getLatestAppointment(@Param("companyId") UUID companyId,
+			@Param("customerId") UUID customerId);
+
 }

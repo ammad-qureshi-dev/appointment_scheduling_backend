@@ -24,12 +24,14 @@ public class Customer extends BaseEntity {
 
 	// Mappings
 	@OneToOne
+	@ToString.Exclude
 	private User user;
 
 	@ManyToOne
 	@ToString.Exclude
 	private Company company;
 
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+	@ToString.Exclude
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Appointment> appointments;
 }

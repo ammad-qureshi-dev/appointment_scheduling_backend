@@ -2,6 +2,8 @@
 Booker App. */
 package com.booker_app.backend_service.services;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -13,28 +15,29 @@ import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.models.Appointment;
 import com.booker_app.backend_service.models.AppointmentStatus;
 import com.booker_app.backend_service.models.Customer;
-import com.booker_app.backend_service.repositories.AppointmentRepository;
-import com.booker_app.backend_service.repositories.CompanyRepository;
-import com.booker_app.backend_service.repositories.CustomerRepository;
-import com.booker_app.backend_service.repositories.EmployeeRepository;
-import org.springframework.stereotype.Service;
+import com.booker_app.backend_service.models.Service;
+import com.booker_app.backend_service.repositories.*;
+import org.springframework.stereotype.Component;
 
 import static com.booker_app.backend_service.controllers.response.ResponseType.*;
 
-@Service
+@Component
 public class AppointmentService {
 
 	private final AppointmentRepository appointmentRepository;
 	private final CustomerRepository customerRepository;
 	private final CompanyRepository companyRepository;
 	private final EmployeeRepository employeeRepository;
+	private final ServicesRepository servicesRepository;
 
 	public AppointmentService(AppointmentRepository appointmentRepository, CustomerRepository customerRepository,
-			CompanyRepository companyRepository, EmployeeRepository employeeRepository) {
+			CompanyRepository companyRepository, EmployeeRepository employeeRepository,
+			ServicesRepository servicesRepository) {
 		this.appointmentRepository = appointmentRepository;
 		this.customerRepository = customerRepository;
 		this.companyRepository = companyRepository;
 		this.employeeRepository = employeeRepository;
+		this.servicesRepository = servicesRepository;
 	}
 
 	public UUID createAppointment(UUID companyId, UUID customerId, AppointmentRequest request) {
@@ -71,10 +74,12 @@ public class AppointmentService {
 			}
 		}
 
-		var newAppointment = Appointment.builder().services(String.join(",", formatServices(request.getServices())))
-				.startTime(request.getStartTime()).endTime(request.getEndTime())
-				.appointmentDate(request.getAppointmentDate()).company(companyOpt.get()).customer(customerOpt.get())
-				.build();
+		var services = servicesRepository.getServicesByName(companyId,
+				request.getServices().stream().map(String::toUpperCase).toList());
+
+		var newAppointment = Appointment.builder().services(services).startTime(request.getStartTime())
+				.endTime(request.getEndTime()).appointmentDate(request.getAppointmentDate()).company(companyOpt.get())
+				.customer(customerOpt.get()).build();
 
 		appointmentRepository.save(newAppointment);
 		return newAppointment.getId();
@@ -96,7 +101,7 @@ public class AppointmentService {
 		}
 
 		var appointments = appointmentsByDateOpt.get();
-		return appointments.stream().map(this::convertAppointmentToDTO).toList();
+		return appointments.stream().map(e -> convertAppointmentToDTO(e)).toList();
 
 	}
 
@@ -122,7 +127,10 @@ public class AppointmentService {
 			}
 		}
 
-		appointment.setServices(String.join(",", formatServices(request.getServices())));
+		var services = servicesRepository.getServicesByName(companyId,
+				request.getServices().stream().map(String::toUpperCase).toList());
+
+		appointment.setServices(services);
 		appointment.setStartTime(request.getStartTime());
 		appointment.setEndTime(request.getEndTime());
 		appointment.setAppointmentDate(request.getAppointmentDate());
@@ -160,14 +168,20 @@ public class AppointmentService {
 		return appointmentOpt.get();
 	}
 
-	private AppointmentDTO convertAppointmentToDTO(Appointment appointment) {
+	public static AppointmentDTO convertAppointmentToDTO(Appointment appointment) {
+		if (Objects.isNull(appointment)) {
+			return null;
+		}
+
 		var services = appointment.getServices();
+		var appointmentCost = BigDecimal.ZERO;
 		List<String> serviceList;
 
 		if (Objects.isNull(services) || services.isEmpty()) {
 			serviceList = Collections.emptyList();
 		} else {
-			serviceList = List.of(String.join(",", services));
+			serviceList = services.stream().map(Service::getName).map(String::toUpperCase).toList();
+			appointmentCost = services.stream().map(Service::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
 		}
 
 		String assignee = "UNASSIGNED";
@@ -176,16 +190,17 @@ public class AppointmentService {
 		}
 
 		return AppointmentDTO.builder().assignedTo(assignee).appointmentId(appointment.getId())
+				.appointmentCost(appointmentCost.setScale(2, RoundingMode.HALF_UP))
 				.appointmentStatus(appointment.getAppointmentStatus()).appointmentDate(appointment.getAppointmentDate())
 				.customer(convertCustomerToDTO(appointment.getCustomer())).startTime(appointment.getStartTime())
 				.endTime(appointment.getEndTime()).services(serviceList).build();
 	}
 
-	private CustomerDTO convertCustomerToDTO(Customer customer) {
+	private static CustomerDTO convertCustomerToDTO(Customer customer) {
 		var user = customer.getUser();
 		return CustomerDTO.builder().dateOfBirth(user.getDateOfBirth()).fullName(user.getFullName())
-				.email(user.getEmail()).phoneNumber(user.getPhoneNumber()).customerId(customer.getGeneratedId())
-				.build();
+				.email(user.getEmail()).phoneNumber(user.getPhoneNumber())
+				.customerId(customer.getGeneratedId().toString()).build();
 	}
 
 	private List<String> formatServices(List<String> services) {

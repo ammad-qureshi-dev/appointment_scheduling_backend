@@ -4,17 +4,18 @@ package com.booker_app.backend_service.controllers.response.dto;
 
 import java.math.BigDecimal;
 
-import com.booker_app.backend_service.models.ServiceLength;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServiceDTO {
+public class ServiceOverviewDTO {
 	private String name;
-	private String description;
+	private Long numberOfTimes;
 	private BigDecimal price;
-	private Integer time;
-	private ServiceLength serviceLength;
+	private BigDecimal total;
 }

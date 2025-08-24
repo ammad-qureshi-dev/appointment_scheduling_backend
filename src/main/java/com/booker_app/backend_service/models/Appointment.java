@@ -4,6 +4,8 @@ package com.booker_app.backend_service.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.*;
@@ -22,7 +24,6 @@ public class Appointment extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
-	private String services;
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 	private LocalDate appointmentDate;
@@ -42,4 +43,9 @@ public class Appointment extends BaseEntity {
 
 	@OneToOne
 	private Employee assignee;
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "appointment_services", schema = "booker_app", joinColumns = @JoinColumn(name = "appointment_id"), inverseJoinColumns = @JoinColumn(name = "service_id"))
+	private List<Service> services = new ArrayList<>();
+
 }

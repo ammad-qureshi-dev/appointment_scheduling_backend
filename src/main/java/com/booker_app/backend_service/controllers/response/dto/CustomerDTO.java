@@ -3,7 +3,6 @@ Booker App. */
 package com.booker_app.backend_service.controllers.response.dto;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,5 +18,18 @@ public class CustomerDTO {
 	private String phoneNumber;
 	private String email;
 	private LocalDate dateOfBirth;
-	private UUID customerId;
+	private String customerId;
+
+	public CustomerDTO(String fullName, String phoneNumber, String email) {
+		this.fullName = fullName;
+		this.phoneNumber = phoneNumber;
+		this.email = email;
+	}
+
+	public CustomerDTO(String fullName, String phoneNumber, String email, String customerId) {
+		this.fullName = fullName;
+		this.phoneNumber = phoneNumber;
+		this.email = email;
+		this.customerId = customerId;
+	}
 }

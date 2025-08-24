@@ -2,6 +2,9 @@
 Booker App. */
 package com.booker_app.backend_service.models;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.*;
@@ -22,7 +25,7 @@ public class Service extends BaseEntity {
 	private UUID id;
 	private String name;
 	private String description;
-	private Double price;
+	private BigDecimal price;
 
 	// 1 HOUR, 25 MINUTES, etc
 	private Integer time;
@@ -32,4 +35,9 @@ public class Service extends BaseEntity {
 	@ManyToOne
 	@ToString.Exclude
 	private Company company;
+
+	@ToString.Exclude
+	@ManyToMany(mappedBy = "services", fetch = FetchType.LAZY)
+	private List<Appointment> appointments = new ArrayList<>();
+
 }
