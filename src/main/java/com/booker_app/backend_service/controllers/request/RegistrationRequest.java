@@ -6,20 +6,19 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;
+import org.springframework.context.annotation.Description;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class UserRegistrationRequest {
+public class RegistrationRequest {
 
-	@NonNull private String fullName;
-
-	@NonNull private String email;
-
+	// Password should be encrypted prior to reaching BE layer
 	@NonNull private String password;
-
+	@NonNull private String fullName;
+	private String email;
 	private LocalDate dateOfBirth;
 	private String phoneNumber;
 }

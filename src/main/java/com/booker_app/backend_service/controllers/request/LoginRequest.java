@@ -9,8 +9,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginRequest {
-	private String email;
+    private String email;
 	private String phoneNumber;
-	private String password;
+
+    // Password should be encrypted prior to reaching BE layer
+    @NonNull
+    private String password;
 	private boolean loginByEmail;
 }

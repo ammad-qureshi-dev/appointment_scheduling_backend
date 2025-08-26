@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.booker_app.backend_service.controllers.request.LoginRequest;
-import com.booker_app.backend_service.controllers.request.UserRegistrationRequest;
+import com.booker_app.backend_service.controllers.request.RegistrationRequest;
 import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.controllers.response.dto.UserProfileDTO;
@@ -39,10 +39,10 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<ServiceResponse<UUID>> registerUser(@RequestBody UserRegistrationRequest request) {
+	public ResponseEntity<ServiceResponse<UUID>> registerUser(@RequestBody RegistrationRequest request, HttpServletResponse response) {
 		var alerts = serviceResponse.getAlerts();
 		try {
-			var userId = userService.registerUser(request);
+			var userId = userService.registerUser(request, response);
 			return getServiceResponse(true, userId, HttpStatus.CREATED, alerts);
 		} catch (CompanyNameTakenException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
