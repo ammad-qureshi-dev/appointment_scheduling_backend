@@ -91,7 +91,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/verify-account/{userId}/method/{method}")
-	private ResponseEntity<ServiceResponse<Boolean>> verifyAccount(@PathVariable UUID userId, @PathVariable AccountVerificationMethod method) {
+	private ResponseEntity<ServiceResponse<Boolean>> verifyAccount(@PathVariable UUID userId,
+			@PathVariable AccountVerificationMethod method) {
 		var alerts = serviceResponse.getAlerts();
 		try {
 			var isVerified = authService.verifyAccount(userId, method);

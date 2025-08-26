@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import com.booker_app.backend_service.configs.JwtConfiguration;
 import com.booker_app.backend_service.exceptions.AuthenticationException;
@@ -58,6 +57,7 @@ public class AuthFilter extends OncePerRequestFilter {
 			return null;
 		}
 
-		return Arrays.stream(cookies).filter(e -> TOKEN.toUpperCase().equals(e.getName())).findFirst().orElseThrow().getValue();
+		return Arrays.stream(cookies).filter(e -> TOKEN.toUpperCase().equals(e.getName())).findFirst().orElseThrow()
+				.getValue();
 	}
 }
