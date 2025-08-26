@@ -6,7 +6,6 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;
-import org.springframework.context.annotation.Description;
 
 @Data
 @Builder

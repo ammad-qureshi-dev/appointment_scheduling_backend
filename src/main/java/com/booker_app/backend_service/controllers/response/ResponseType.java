@@ -6,6 +6,8 @@ import lombok.Getter;
 
 @Getter
 public enum ResponseType {
+	NOT_IMPLEMENTED_YET("This function/service has not been implemented yet"),
+	ACCOUNT_NOT_VERIFIED("Sorry, please verify this account"),
 	INVALID_CREDENTIALS_PROVIDED("Invalid Credentials Provided"), EMAIL_ALREADY_TAKEN("Email already taken"), COMMON(
 			""), USER_ALREADY_EXISTS("User already exists"), SERVICE_ALREADY_EXISTS(
 					"Service already exists"), CANNOT_REMOVE_OWNER(

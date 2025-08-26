@@ -12,6 +12,7 @@ import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.controllers.response.dto.UserProfileDTO;
 import com.booker_app.backend_service.exceptions.CompanyNameTakenException;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
+import com.booker_app.backend_service.models.AccountVerificationMethod;
 import com.booker_app.backend_service.models.UserRole;
 import com.booker_app.backend_service.services.AuthService;
 import com.booker_app.backend_service.services.UserService;
@@ -39,10 +40,11 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<ServiceResponse<UUID>> registerUser(@RequestBody RegistrationRequest request, HttpServletResponse response) {
+	public ResponseEntity<ServiceResponse<UUID>> registerUser(@RequestBody RegistrationRequest request,
+			HttpServletResponse response) {
 		var alerts = serviceResponse.getAlerts();
 		try {
-			var userId = userService.registerUser(request, response);
+			var userId = authService.registerUser(request, response);
 			return getServiceResponse(true, userId, HttpStatus.CREATED, alerts);
 		} catch (CompanyNameTakenException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
@@ -88,4 +90,15 @@ public class AuthController {
 		}
 	}
 
+	@PostMapping("/verify-account/{userId}/method/{method}")
+	private ResponseEntity<ServiceResponse<Boolean>> verifyAccount(@PathVariable UUID userId, @PathVariable AccountVerificationMethod method) {
+		var alerts = serviceResponse.getAlerts();
+		try {
+			var isVerified = authService.verifyAccount(userId, method);
+			return getServiceResponse(true, isVerified, HttpStatus.OK);
+		} catch (ServiceResponseException e) {
+			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
+			return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
+		}
+	}
 }

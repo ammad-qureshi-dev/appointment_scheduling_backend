@@ -24,24 +24,8 @@ public class UserService {
 
 	public UserService(UserRepository userRepository, JwtConfiguration jwtConfiguration) {
 		this.userRepository = userRepository;
-        this.jwtConfiguration = jwtConfiguration;
-    }
-
-	public UUID registerUser(RegistrationRequest request, HttpServletResponse response) {
-		var userResult = userRepository.getUserByEmail(request.getEmail());
-		if (userResult.isPresent()) {
-			throw new ServiceResponseException(USER_ALREADY_EXISTS);
-		}
-
-		var newUser = User.builder().email(request.getEmail()).password(request.getPassword())
-				.dateOfBirth(request.getDateOfBirth()).fullName(request.getFullName())
-				.phoneNumber(request.getPhoneNumber()).build();
-
-		userRepository.save(newUser);
-
-		var token = jwtConfiguration.generateToken(newUser);
-		HttpUtil.addCookie(response, TOKEN, token);
-
-		return newUser.getId();
+		this.jwtConfiguration = jwtConfiguration;
 	}
+
+
 }
