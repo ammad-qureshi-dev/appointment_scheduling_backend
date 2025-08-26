@@ -30,5 +30,9 @@ public class User extends BaseEntity {
 	private String password;
 	private boolean isVerified;
 
+	@Enumerated(EnumType.STRING)
+	@Builder.Default
+	private UserRole userRole = UserRole.CUSTOMER;
+
 	// Mappings
 }

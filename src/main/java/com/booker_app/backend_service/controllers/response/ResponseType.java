@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 public enum ResponseType {
+	INVALID_CREDENTIALS_PROVIDED("Invalid Credentials Provided"),
 	EMAIL_ALREADY_TAKEN("Email already taken"), COMMON(""), USER_ALREADY_EXISTS(
 			"User already exists"), SERVICE_ALREADY_EXISTS("Service already exists"), CANNOT_REMOVE_OWNER(
 					"User has role-type of OWNER, cannot remove"), USER_NOT_FOUND(

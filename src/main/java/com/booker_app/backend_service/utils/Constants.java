@@ -7,6 +7,13 @@ public class Constants {
 	Constants() {
 	}
 
+	public static class Auth {
+		Auth() {
+
+		}
+		public static final String TOKEN = "token";
+	}
+
 	public static class Endpoints {
 		Endpoints() {
 		}
