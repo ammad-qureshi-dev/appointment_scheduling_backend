@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.UUID;
 
 import com.booker_app.backend_service.controllers.request.LoginRequest;
+import com.booker_app.backend_service.controllers.request.UserRegistrationRequest;
 import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.controllers.response.dto.UserProfileDTO;
+import com.booker_app.backend_service.exceptions.CompanyNameTakenException;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.models.UserRole;
 import com.booker_app.backend_service.services.AuthService;
+import com.booker_app.backend_service.services.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,20 +30,34 @@ public class AuthController {
 
 	private final AuthService authService;
 	private final ServiceResponse<?> serviceResponse;
+	private final UserService userService;
 
-	public AuthController(AuthService authService, ServiceResponse<?> serviceResponse) {
+	public AuthController(AuthService authService, ServiceResponse<?> serviceResponse, UserService userService) {
 		this.authService = authService;
 		this.serviceResponse = serviceResponse;
+		this.userService = userService;
+	}
+
+	@PostMapping("/register")
+	public ResponseEntity<ServiceResponse<UUID>> registerUser(@RequestBody UserRegistrationRequest request) {
+		var alerts = serviceResponse.getAlerts();
+		try {
+			var userId = userService.registerUser(request);
+			return getServiceResponse(true, userId, HttpStatus.CREATED, alerts);
+		} catch (CompanyNameTakenException e) {
+			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
+			return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
+		}
 	}
 
 	@PostMapping("/login")
 	private ResponseEntity<ServiceResponse<UUID>> login(@RequestBody LoginRequest loginRequest,
 			HttpServletResponse response) {
+		var alerts = serviceResponse.getAlerts();
 		try {
 			var userId = authService.userLogin(loginRequest, response);
-			return getServiceResponse(true, userId, HttpStatus.OK);
+			return getServiceResponse(true, userId, HttpStatus.OK, alerts);
 		} catch (ServiceResponseException e) {
-			var alerts = serviceResponse.getAlerts();
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
 			return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
 		}
@@ -49,11 +66,11 @@ public class AuthController {
 	@PostMapping("/switch-role/{userId}/{role}")
 	private ResponseEntity<ServiceResponse<UUID>> switchRole(@PathVariable UUID userId, HttpServletResponse response,
 			@PathVariable UserRole role) {
+		var alerts = serviceResponse.getAlerts();
 		try {
 			authService.switchUserRole(userId, response, role);
-			return getServiceResponse(true, userId, HttpStatus.OK);
+			return getServiceResponse(true, userId, HttpStatus.OK, alerts);
 		} catch (ServiceResponseException e) {
-			var alerts = serviceResponse.getAlerts();
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
 			return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
 		}
@@ -61,11 +78,11 @@ public class AuthController {
 
 	@GetMapping("/user-profiles/{userId}")
 	private ResponseEntity<ServiceResponse<List<UserProfileDTO>>> getUserProfiles(@PathVariable UUID userId) {
+		var alerts = serviceResponse.getAlerts();
 		try {
 			var profiles = authService.getUserProfiles(userId);
 			return getServiceResponse(true, profiles, HttpStatus.OK);
 		} catch (ServiceResponseException e) {
-			var alerts = serviceResponse.getAlerts();
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.WARNING));
 			return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
 		}
