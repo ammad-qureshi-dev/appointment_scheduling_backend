@@ -36,11 +36,11 @@ public class AppointmentController {
 		this.appointmentService = appointmentService;
 	}
 
-	@PostMapping("/company/{companyId}/customer/{customerId}")
-	public ResponseEntity<ServiceResponse<UUID>> createAppointment(@PathVariable("companyId") UUID companyId,
+	@PostMapping("/business/{businessId}/customer/{customerId}")
+	public ResponseEntity<ServiceResponse<UUID>> createAppointment(@PathVariable("businessId") UUID businessId,
 			@PathVariable("customerId") UUID customerId, @RequestBody AppointmentRequest request) {
 		try {
-			var appointmentId = appointmentService.createAppointment(companyId, customerId, request);
+			var appointmentId = appointmentService.createAppointment(businessId, customerId, request);
 			return getServiceResponse(true, appointmentId, HttpStatus.CREATED);
 		} catch (ServiceResponseException e) {
 			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
@@ -48,11 +48,11 @@ public class AppointmentController {
 		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, responseData);
 	}
 
-	@GetMapping("/company/{companyId}/search/{appointmentDate}")
+	@GetMapping("/business/{businessId}/search/{appointmentDate}")
 	public ResponseEntity<ServiceResponse<List<AppointmentDTO>>> getAppointmentsByAppointmentDate(
-			@PathVariable("companyId") UUID companyId, @PathVariable("appointmentDate") LocalDate appointmentDate) {
+			@PathVariable("businessId") UUID businessId, @PathVariable("appointmentDate") LocalDate appointmentDate) {
 		try {
-			var appointmentId = appointmentService.getAppointmentsByAppointmentDate(companyId, appointmentDate);
+			var appointmentId = appointmentService.getAppointmentsByAppointmentDate(businessId, appointmentDate);
 			return getServiceResponse(true, appointmentId, HttpStatus.OK);
 		} catch (ServiceResponseException e) {
 			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
@@ -60,12 +60,12 @@ public class AppointmentController {
 		return getServiceResponse(false, Collections.emptyList(), HttpStatus.BAD_REQUEST, responseData);
 	}
 
-	@PutMapping("/company/{companyId}/update/{appointmentId}/customer/{customerId}")
-	public ResponseEntity<ServiceResponse<Boolean>> updateAppointment(@PathVariable("companyId") UUID companyId,
+	@PutMapping("/business/{businessId}/update/{appointmentId}/customer/{customerId}")
+	public ResponseEntity<ServiceResponse<Boolean>> updateAppointment(@PathVariable("businessId") UUID businessId,
 			@PathVariable("appointmentId") UUID appointmentId, @PathVariable("customerId") UUID customerId,
 			@RequestBody AppointmentRequest request) {
 		try {
-			var isUpdated = appointmentService.updateAppointment(companyId, appointmentId, customerId, request);
+			var isUpdated = appointmentService.updateAppointment(businessId, appointmentId, customerId, request);
 			return getServiceResponse(true, isUpdated, HttpStatus.OK);
 		} catch (ServiceResponseException e) {
 			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));

@@ -11,7 +11,7 @@ import com.booker_app.backend_service.controllers.response.dto.EmployeeDTO;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.models.Employee;
 import com.booker_app.backend_service.models.EmploymentRole;
-import com.booker_app.backend_service.repositories.CompanyRepository;
+import com.booker_app.backend_service.repositories.BusinessRepository;
 import com.booker_app.backend_service.repositories.EmployeeRepository;
 import com.booker_app.backend_service.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -23,22 +23,22 @@ import static com.booker_app.backend_service.controllers.response.ResponseType.*
 @Service
 public class EmployeeService {
 
-	private final CompanyRepository companyRepository;
+	private final BusinessRepository businessRepository;
 	private final EmployeeRepository employeeRepository;
 	private final UserRepository userRepository;
 
-	public EmployeeService(CompanyRepository companyRepository, EmployeeRepository employeeRepository,
+	public EmployeeService(BusinessRepository businessRepository, EmployeeRepository employeeRepository,
 			UserRepository userRepository) {
-		this.companyRepository = companyRepository;
+		this.businessRepository = businessRepository;
 		this.employeeRepository = employeeRepository;
 		this.userRepository = userRepository;
 	}
 
 	// ToDo: add role logic where only OWNER can add employee
-	public UUID addEmployeeToCompany(UUID companyId, EmployeeRequest request) {
-		var companyResult = companyRepository.findById(companyId);
+	public UUID addEmployeeToBusiness(UUID companyId, EmployeeRequest request) {
+		var companyResult = businessRepository.findById(companyId);
 		if (companyResult.isEmpty()) {
-			throw new ServiceResponseException(COMPANY_NOT_FOUND);
+			throw new ServiceResponseException(BUSINESS_NOT_FOUND);
 		}
 
 		var userResult = userRepository.getUserByEmail(request.getEmail());
@@ -53,7 +53,7 @@ public class EmployeeService {
 			}
 		}
 
-		var newEmployee = Employee.builder().company(company).role(request.getRole()).user(userResult.get()).build();
+		var newEmployee = Employee.builder().business(company).role(request.getRole()).user(userResult.get()).build();
 
 		if (EmploymentRole.OWNER.equals(request.getRole())) {
 			company.setOwner(newEmployee);
@@ -61,15 +61,15 @@ public class EmployeeService {
 
 		company.getEmployees().add(newEmployee);
 
-		companyRepository.save(company);
+		businessRepository.save(company);
 
 		return company.getEmployees().getLast().getGeneratedId();
 	}
 
 	public List<EmployeeDTO> getAllEmployees(UUID companyId) {
-		var companyResult = companyRepository.findById(companyId);
+		var companyResult = businessRepository.findById(companyId);
 		if (companyResult.isEmpty()) {
-			throw new ServiceResponseException(COMPANY_NOT_FOUND);
+			throw new ServiceResponseException(BUSINESS_NOT_FOUND);
 		}
 
 		var result = employeeRepository.getAllEmployees(companyId);
@@ -77,10 +77,10 @@ public class EmployeeService {
 	}
 
 	// ToDo: add role logic where only OWNER can remove employee
-	public Boolean removeEmployeeFromCompany(UUID companyId, EmployeeRequest request) {
-		var companyResult = companyRepository.findById(companyId);
+	public Boolean removeEmployeeFromBusiness(UUID companyId, EmployeeRequest request) {
+		var companyResult = businessRepository.findById(companyId);
 		if (companyResult.isEmpty()) {
-			throw new ServiceResponseException(COMPANY_NOT_FOUND);
+			throw new ServiceResponseException(BUSINESS_NOT_FOUND);
 		}
 
 		var userOpt = userRepository.getUserByEmail(request.getEmail());
@@ -103,12 +103,12 @@ public class EmployeeService {
 			throw new ServiceResponseException(CANNOT_REMOVE_OWNER);
 		}
 
-		employee.setCompany(null);
+		employee.setBusiness(null);
 		employeeRepository.delete(employee);
 
 		var employeeListSize = company.getEmployees().size();
 		company.getEmployees().remove(employee);
-		companyRepository.save(company);
+		businessRepository.save(company);
 
 		return company.getEmployees().size() < employeeListSize;
 	}

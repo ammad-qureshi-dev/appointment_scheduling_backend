@@ -14,7 +14,7 @@ import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.models.AccountVerificationMethod;
 import com.booker_app.backend_service.models.User;
 import com.booker_app.backend_service.models.UserRole;
-import com.booker_app.backend_service.repositories.CompanyRepository;
+import com.booker_app.backend_service.repositories.BusinessRepository;
 import com.booker_app.backend_service.repositories.CustomerRepository;
 import com.booker_app.backend_service.repositories.EmployeeRepository;
 import com.booker_app.backend_service.repositories.UserRepository;
@@ -30,15 +30,15 @@ import static com.booker_app.backend_service.utils.Constants.Auth.TOKEN;
 @Component
 public class AuthService {
 
-	private final CompanyRepository companyRepository;
+	private final BusinessRepository businessRepository;
 	private final EmployeeRepository employeeRepository;
 	private final CustomerRepository customerRepository;
 	private final UserRepository userRepository;
 	private final JwtConfiguration jwtConfiguration;
 
-	public AuthService(CompanyRepository companyRepository, EmployeeRepository employeeRepository,
+	public AuthService(BusinessRepository businessRepository, EmployeeRepository employeeRepository,
 			CustomerRepository customerRepository, UserRepository userRepository, JwtConfiguration jwtConfiguration) {
-		this.companyRepository = companyRepository;
+		this.businessRepository = businessRepository;
 		this.employeeRepository = employeeRepository;
 		this.customerRepository = customerRepository;
 		this.userRepository = userRepository;
@@ -102,7 +102,7 @@ public class AuthService {
 		profiles.add(UserProfileDTO.builder().label(user.getFullName()).contextId(userId)
 				.role(UserRole.CUSTOMER.toString()).build());
 
-		profiles.addAll(companyRepository.getCompanyProfiles(userId).orElseGet(ArrayList::new));
+		profiles.addAll(businessRepository.getBusinessProfiles(userId).orElseGet(ArrayList::new));
 		profiles.addAll(employeeRepository.getEmployeeProfiles(userId).orElseGet(ArrayList::new));
 		return profiles;
 	}

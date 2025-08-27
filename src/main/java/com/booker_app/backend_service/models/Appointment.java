@@ -35,7 +35,7 @@ public class Appointment extends BaseEntity {
 	// Mappings
 	@ManyToOne
 	@ToString.Exclude
-	private Company company;
+	private Business business;
 
 	@ManyToOne
 	@ToString.Exclude

@@ -20,36 +20,36 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 	@Query("""
 			select count(A)
 			from Appointment A
-			where A.company.id = :companyId
+			where A.business.id = :businessId
 			and A.appointmentDate = :appointmentDate
 			and A.startTime < :endTime
 			and A.endTime > :startTime
 			and A.customer.generatedId != :customerId
 			""")
-	Integer findAmountOfBookingsWithinBookingTime(@Param("companyId") UUID companyId,
+	Integer findAmountOfBookingsWithinBookingTime(@Param("businessId") UUID businessId,
 			@Param("appointmentDate") LocalDate appointmentDate, @Param("startTime") LocalDateTime startTime,
 			@Param("endTime") LocalDateTime endTime, @Param("customerId") UUID customerId);
 
 	@Query("""
 			select A
 			from Appointment A
-			where A.company.id = :companyId
+			where A.business.id = :businessId
 			and A.appointmentDate = :appointmentDate
 			order by A.startTime asc
 			""")
-	Optional<List<Appointment>> getAppointmentsByDate(@Param("companyId") UUID companyId,
+	Optional<List<Appointment>> getAppointmentsByDate(@Param("businessId") UUID businessId,
 			@Param("appointmentDate") LocalDate appointmentDate);
 
 	@Query(value = """
 			select *
 			from booker_app.appointment a
 			where a.customer_generated_id = :customerId
-			and a.company_id = :companyId
+			and a.business_id = :businessId
 			and a.end_time < now()
 			order by a.end_time desc
 			limit 1
 			""", nativeQuery = true)
-	Optional<Appointment> getLatestAppointment(@Param("companyId") UUID companyId,
+	Optional<Appointment> getLatestAppointment(@Param("businessId") UUID businessId,
 			@Param("customerId") UUID customerId);
 
 }

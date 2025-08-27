@@ -8,11 +8,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NewCompanyRequest {
-
+public class NewBusinessRequest {
 	@NonNull private String name;
-
-	private String description;
-
 	@NonNull private String address;
+	private String description;
 }

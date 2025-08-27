@@ -18,6 +18,5 @@ public class Constants {
 		Endpoints() {
 		}
 		public static final String BASE_URL_V1 = "/api/v1";
-		public static final String COMPANY_CONTROLLER = "/company";
 	}
 }

@@ -21,8 +21,8 @@ public enum ResponseType {
 																									"Appointment not found"), TIME_SLOT_TAKEN(
 																											"Could not book for that time slot, please find another"), CUSTOMER_ALREADY_EXISTS(
 																													"Customer already exists."), CUSTOMER_NOT_FOUND(
-																															"Could not find customer."), COMPANY_ALREADY_EXISTS(
-																																	"This business name already exists, please choose another one."), COMPANY_NOT_FOUND(
+																															"Could not find customer."), BUSINESS_ALREADY_EXISTS(
+																																	"This business name already exists, please choose another one."), BUSINESS_NOT_FOUND(
 																																			"No business was found with that ID.");
 
 	private final String alertMessage;

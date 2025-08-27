@@ -34,7 +34,7 @@ public class Service extends BaseEntity {
 	// Mappings
 	@ManyToOne
 	@ToString.Exclude
-	private Company company;
+	private Business business;
 
 	@ToString.Exclude
 	@ManyToMany(mappedBy = "services", fetch = FetchType.LAZY)

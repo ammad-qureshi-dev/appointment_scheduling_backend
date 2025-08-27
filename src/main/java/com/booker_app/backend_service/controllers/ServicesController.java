@@ -33,11 +33,11 @@ public class ServicesController {
 		this.servicesService = servicesService;
 	}
 
-	@PostMapping("/{companyId}")
-	public ResponseEntity<ServiceResponse<Boolean>> addService(@PathVariable UUID companyId,
+	@PostMapping("/{businessId}")
+	public ResponseEntity<ServiceResponse<Boolean>> addService(@PathVariable UUID businessId,
 			@RequestBody List<ServiceRequest> request) {
 		try {
-			servicesService.addService(companyId, request);
+			servicesService.addService(businessId, request);
 			return getServiceResponse(true, true, HttpStatus.CREATED);
 		} catch (ServiceResponseException e) {
 			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
@@ -45,10 +45,10 @@ public class ServicesController {
 		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, responseData);
 	}
 
-	@GetMapping("/{companyId}/search")
-	public ResponseEntity<ServiceResponse<List<ServiceDTO>>> getAllServices(@PathVariable UUID companyId) {
+	@GetMapping("/{businessId}/search")
+	public ResponseEntity<ServiceResponse<List<ServiceDTO>>> getAllServices(@PathVariable UUID businessId) {
 		try {
-			var services = servicesService.getAllServices(companyId);
+			var services = servicesService.getAllServices(businessId);
 			return getServiceResponse(true, services, HttpStatus.OK);
 		} catch (ServiceResponseException e) {
 			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
@@ -56,11 +56,11 @@ public class ServicesController {
 		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, responseData);
 	}
 
-	@DeleteMapping("/{companyId}")
-	public ResponseEntity<ServiceResponse<Boolean>> removeService(@PathVariable UUID companyId,
+	@DeleteMapping("/{businessId}")
+	public ResponseEntity<ServiceResponse<Boolean>> removeService(@PathVariable UUID businessId,
 			@RequestBody SimpleServiceRequest request) {
 		try {
-			var services = servicesService.removeService(companyId, request);
+			var services = servicesService.removeService(businessId, request);
 			return getServiceResponse(true, services, HttpStatus.OK);
 		} catch (ServiceResponseException e) {
 			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
@@ -68,11 +68,11 @@ public class ServicesController {
 		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, responseData);
 	}
 
-	@PutMapping("/{companyId}")
-	public ResponseEntity<ServiceResponse<Boolean>> updateService(@PathVariable UUID companyId,
+	@PutMapping("/{businessId}")
+	public ResponseEntity<ServiceResponse<Boolean>> updateService(@PathVariable UUID businessId,
 			@RequestBody ServiceRequest request) {
 		try {
-			var isUpdated = servicesService.updateService(companyId, request);
+			var isUpdated = servicesService.updateService(businessId, request);
 			return getServiceResponse(true, isUpdated, HttpStatus.OK);
 		} catch (ServiceResponseException e) {
 			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));

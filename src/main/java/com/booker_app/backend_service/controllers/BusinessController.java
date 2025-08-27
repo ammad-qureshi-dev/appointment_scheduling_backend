@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.booker_app.backend_service.controllers.request.NewCompanyRequest;
+import com.booker_app.backend_service.controllers.request.NewBusinessRequest;
 import com.booker_app.backend_service.controllers.response.ResponseData;
 import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
-import com.booker_app.backend_service.exceptions.CompanyNameTakenException;
+import com.booker_app.backend_service.exceptions.BusinessNameTakenException;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
-import com.booker_app.backend_service.services.CompanyService;
+import com.booker_app.backend_service.services.BusinessService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,23 +22,23 @@ import static com.booker_app.backend_service.utils.CommonUtils.generateResponseD
 import static com.booker_app.backend_service.utils.Constants.Endpoints.BASE_URL_V1;
 
 @RestController
-@RequestMapping(BASE_URL_V1 + "/company")
-public class CompanyController {
+@RequestMapping(BASE_URL_V1 + "/business")
+public class BusinessController {
 
-	private final CompanyService companyService;
+	private final BusinessService businessService;
 	private final List<ResponseData> responseData = new ArrayList<>();
 
-	public CompanyController(CompanyService companyService) {
-		this.companyService = companyService;
+	public BusinessController(BusinessService businessService) {
+		this.businessService = businessService;
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<ServiceResponse<UUID>> createNewCompany(@RequestBody NewCompanyRequest request) {
+	public ResponseEntity<ServiceResponse<UUID>> createNewBusiness(@RequestBody NewBusinessRequest request) {
 		try {
-			var companyShortId = companyService.createNewCompany(request);
-			return getServiceResponse(true, companyShortId, HttpStatus.OK);
+			var businessId = businessService.createNewBusiness(request);
+			return getServiceResponse(true, businessId, HttpStatus.OK);
 
-		} catch (CompanyNameTakenException | ServiceResponseException e) {
+		} catch (BusinessNameTakenException | ServiceResponseException e) {
 			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
 		}
 

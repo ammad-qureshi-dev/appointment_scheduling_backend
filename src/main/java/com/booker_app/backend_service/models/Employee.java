@@ -30,5 +30,5 @@ public class Employee extends BaseEntity {
 
 	@ManyToOne
 	@ToString.Exclude
-	private Company company;
+	private Business business;
 }
