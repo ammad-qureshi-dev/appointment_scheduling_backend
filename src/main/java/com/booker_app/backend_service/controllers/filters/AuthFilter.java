@@ -15,11 +15,13 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import static com.booker_app.backend_service.utils.Constants.Auth.TOKEN;
 
+@Order(1)
 @Component
 @WebFilter(urlPatterns = "/api/v1/*")
 public class AuthFilter extends OncePerRequestFilter {

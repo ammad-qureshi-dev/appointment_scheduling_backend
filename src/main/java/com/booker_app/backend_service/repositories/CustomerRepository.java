@@ -16,17 +16,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, UUID> {
 
-	@Query("select C from Customer C where C.company.id = :companyId and (C.user.phoneNumber = :phoneNumber or C.user.email = :email)")
-	Optional<Customer> getCustomerByPhoneOrEmail(@Param("companyId") UUID companyId,
+	@Query("select C from Customer C where C.business.id = :businessId and (C.user.phoneNumber = :phoneNumber or C.user.email = :email)")
+	Optional<Customer> getCustomerByPhoneOrEmail(@Param("businessId") UUID businessId,
 			@Param("phoneNumber") String phoneNumber, @Param("email") String email);
 
 	@Query("""
 			   SELECT c FROM Customer c
 			   LEFT JOIN c.appointments a
 			   LEFT JOIN a.services s
-			   WHERE c.id = :customerId AND c.company.id = :companyId
+			   WHERE c.id = :customerId AND c.business.id = :businessId
 			""")
-	Optional<Customer> findWithAppointmentsAndServices(UUID customerId, UUID companyId);
+	Optional<Customer> findWithAppointmentsAndServices(UUID customerId, UUID businessId);
 
 	@Query(value = """
 			  select
@@ -49,14 +49,14 @@ public interface CustomerRepository extends JpaRepository<Customer, UUID> {
 				u.email as email,
 				cast(c.generated_id as varchar) as customerId
 			from booker_app.Customer c
-			inner join booker_app.Company cc on c.company_id = cc.id
+			inner join booker_app.business cc on c.business_id = cc.id
 			inner join booker_app.User u on c.user_id = u.id
 			where u.full_name ilike concat('%', :searchParam, '%')
 			 		or u.phone_number like concat('%', :searchParam, '%')
 			 		or u.email ilike concat('%', :searchParam, '%')
 			order by u.full_name asc
 			""", nativeQuery = true)
-	List<CustomerDTO> findCustomerBySearch(@Param("companyId") UUID companyId,
+	List<CustomerDTO> findCustomerBySearch(@Param("businessId") UUID businessId,
 			@Param("searchParam") String searchParam);
 
 }

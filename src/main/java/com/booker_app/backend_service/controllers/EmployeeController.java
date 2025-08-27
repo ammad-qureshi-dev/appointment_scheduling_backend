@@ -32,11 +32,11 @@ public class EmployeeController {
 		this.employeeService = employeeService;
 	}
 
-	@PostMapping("/{companyId}")
-	public ResponseEntity<ServiceResponse<UUID>> addEmployee(@PathVariable UUID companyId,
+	@PostMapping("/{businessId}")
+	public ResponseEntity<ServiceResponse<UUID>> addEmployee(@PathVariable UUID businessId,
 			@RequestBody EmployeeRequest request) {
 		try {
-			var userId = employeeService.addEmployeeToCompany(companyId, request);
+			var userId = employeeService.addEmployeeToBusiness(businessId, request);
 			return getServiceResponse(true, userId, HttpStatus.CREATED);
 		} catch (ServiceResponseException e) {
 			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
@@ -44,10 +44,10 @@ public class EmployeeController {
 		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, responseData);
 	}
 
-	@GetMapping("/{companyId}")
-	public ResponseEntity<ServiceResponse<List<EmployeeDTO>>> getAllEmployees(@PathVariable UUID companyId) {
+	@GetMapping("/{businessId}")
+	public ResponseEntity<ServiceResponse<List<EmployeeDTO>>> getAllEmployees(@PathVariable UUID businessId) {
 		try {
-			var result = employeeService.getAllEmployees(companyId);
+			var result = employeeService.getAllEmployees(businessId);
 			return getServiceResponse(true, result, HttpStatus.OK);
 		} catch (ServiceResponseException e) {
 			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
@@ -55,11 +55,11 @@ public class EmployeeController {
 		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, responseData);
 	}
 
-	@DeleteMapping("/{companyId}")
-	public ResponseEntity<ServiceResponse<Boolean>> removeEmployee(@PathVariable UUID companyId,
+	@DeleteMapping("/{businessId}")
+	public ResponseEntity<ServiceResponse<Boolean>> removeEmployee(@PathVariable UUID businessId,
 			@RequestBody EmployeeRequest request) {
 		try {
-			var isDeleted = employeeService.removeEmployeeFromCompany(companyId, request);
+			var isDeleted = employeeService.removeEmployeeFromBusiness(businessId, request);
 			return getServiceResponse(true, isDeleted, HttpStatus.OK);
 		} catch (ServiceResponseException e) {
 			responseData.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));

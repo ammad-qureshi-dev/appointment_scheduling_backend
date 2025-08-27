@@ -33,12 +33,12 @@ public class CustomerController {
 		this.serviceResponse = serviceResponse;
 	}
 
-	@PostMapping("/{companyId}")
-	public ResponseEntity<ServiceResponse<UUID>> addCustomer(@PathVariable("companyId") UUID companyId,
+	@PostMapping("/{businessId}")
+	public ResponseEntity<ServiceResponse<UUID>> addCustomer(@PathVariable("businessId") UUID businessId,
 			@RequestBody CustomerRequest request) {
 		var alerts = serviceResponse.getAlerts();
 		try {
-			var customerId = customerService.addCustomer(companyId, request);
+			var customerId = customerService.addCustomer(businessId, request);
 			return getServiceResponse(true, customerId, HttpStatus.CREATED, alerts);
 		} catch (ServiceResponseException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.WARNING));
@@ -46,24 +46,24 @@ public class CustomerController {
 		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
 	}
 
-	@GetMapping("/{companyId}/search/all")
+	@GetMapping("/{businessId}/search/all")
 	public ResponseEntity<ServiceResponse<List<CustomerDTO>>> findAllCustomers(
-			@PathVariable("companyId") UUID companyId) {
+			@PathVariable("businessId") UUID businessId) {
 		var alerts = serviceResponse.getAlerts();
 		try {
-			return getServiceResponse(true, customerService.getAllCustomers(companyId), HttpStatus.OK, alerts);
+			return getServiceResponse(true, customerService.getAllCustomers(businessId), HttpStatus.OK, alerts);
 		} catch (ServiceResponseException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
 		}
 		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
 	}
 
-	@GetMapping("/{companyId}/search/single")
-	public ResponseEntity<ServiceResponse<CustomerDTO>> findCustomerBySearch(@PathVariable("companyId") UUID companyId,
-			@RequestBody CustomerRequest request) {
+	@GetMapping("/{businessId}/search/single")
+	public ResponseEntity<ServiceResponse<CustomerDTO>> findCustomerBySearch(
+			@PathVariable("businessId") UUID businessId, @RequestBody CustomerRequest request) {
 		var alerts = serviceResponse.getAlerts();
 		try {
-			var response = customerService.getCustomerByPhoneOrEmail(companyId, request);
+			var response = customerService.getCustomerByPhoneOrEmail(businessId, request);
 			return getServiceResponse(true, response, HttpStatus.OK, alerts);
 		} catch (ServiceResponseException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
@@ -71,12 +71,12 @@ public class CustomerController {
 		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
 	}
 
-	@DeleteMapping("/{companyId}")
-	public ResponseEntity<ServiceResponse<Boolean>> deleteCustomer(@PathVariable("companyId") UUID companyId,
+	@DeleteMapping("/{businessId}")
+	public ResponseEntity<ServiceResponse<Boolean>> deleteCustomer(@PathVariable("businessId") UUID businessId,
 			@RequestBody CustomerRequest request) {
 		var alerts = serviceResponse.getAlerts();
 		try {
-			var isDeleted = customerService.deleteCustomer(companyId, request);
+			var isDeleted = customerService.deleteCustomer(businessId, request);
 			return getServiceResponse(true, isDeleted, HttpStatus.OK, alerts);
 		} catch (ServiceResponseException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
@@ -84,13 +84,13 @@ public class CustomerController {
 		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
 	}
 
-	@GetMapping("/{customerId}/company/{companyId}/appointment-overview")
-	@Description("Retrieves a customer's appointment status for the company like upcoming appointment, past appointments + services, and typical spend")
+	@GetMapping("/{customerId}/business/{businessId}/appointment-overview")
+	@Description("Retrieves a customer's appointment status for the business like upcoming appointment, past appointments + services, and typical spend")
 	public ResponseEntity<ServiceResponse<CustomerOverviewDTO>> getCustomerAppointmentOverview(
-			@PathVariable("customerId") UUID customerId, @PathVariable("companyId") UUID companyId) {
+			@PathVariable("customerId") UUID customerId, @PathVariable("businessId") UUID businessId) {
 		var alerts = serviceResponse.getAlerts();
 		try {
-			var overview = customerService.getCustomerAppointmentOverview(customerId, companyId);
+			var overview = customerService.getCustomerAppointmentOverview(customerId, businessId);
 			return getServiceResponse(true, overview, HttpStatus.OK, alerts);
 		} catch (ServiceResponseException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
@@ -98,12 +98,12 @@ public class CustomerController {
 		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
 	}
 
-	@GetMapping("/{companyId}/search")
+	@GetMapping("/{businessId}/search")
 	public ResponseEntity<ServiceResponse<List<CustomerDTO>>> getCustomerBySearch(
-			@PathVariable("companyId") UUID companyId, @RequestParam("param") String param) {
+			@PathVariable("businessId") UUID businessId, @RequestParam("param") String param) {
 		var alerts = serviceResponse.getAlerts();
 		try {
-			var results = customerService.getCustomerBySearch(companyId, param);
+			var results = customerService.getCustomerBySearch(businessId, param);
 			return getServiceResponse(true, results, HttpStatus.OK, alerts);
 		} catch (ServiceResponseException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));

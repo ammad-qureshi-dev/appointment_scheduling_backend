@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.booker_app.backend_service.models.AppointmentStatus;
+import com.booker_app.backend_service.models.enums.AppointmentStatus;
 import lombok.*;
 
 @Data

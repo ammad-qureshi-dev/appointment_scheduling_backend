@@ -2,7 +2,7 @@
 Booker App. */
 package com.booker_app.backend_service.controllers.request;
 
-import com.booker_app.backend_service.models.EmploymentRole;
+import com.booker_app.backend_service.models.enums.EmploymentRole;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;

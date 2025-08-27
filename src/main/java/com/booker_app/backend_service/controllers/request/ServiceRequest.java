@@ -4,7 +4,7 @@ package com.booker_app.backend_service.controllers.request;
 
 import java.math.BigDecimal;
 
-import com.booker_app.backend_service.models.ServiceLength;
+import com.booker_app.backend_service.models.enums.ServiceLength;
 import lombok.*;
 
 @Data

@@ -30,27 +30,27 @@ public class CustomerService {
 
 	private final ServiceResponse<?> serviceResponse;
 
-	private final CompanyRepository companyRepository;
+	private final BusinessRepository businessRepository;
 	private final UserRepository userRepository;
 	private final CustomerRepository customerRepository;
 	private final ServicesRepository servicesRepository;
 	private final AppointmentRepository appointmentRepository;
 
-	public CustomerService(ServiceResponse<?> serviceResponse, CompanyRepository companyRepository,
+	public CustomerService(ServiceResponse<?> serviceResponse, BusinessRepository businessRepository,
 			UserRepository userRepository, CustomerRepository customerRepository, ServicesRepository servicesRepository,
 			AppointmentRepository appointmentRepository) {
 		this.serviceResponse = serviceResponse;
-		this.companyRepository = companyRepository;
+		this.businessRepository = businessRepository;
 		this.userRepository = userRepository;
 		this.customerRepository = customerRepository;
 		this.servicesRepository = servicesRepository;
 		this.appointmentRepository = appointmentRepository;
 	}
 
-	public UUID addCustomer(UUID companyId, CustomerRequest request) {
-		var companyOpt = companyRepository.findById(companyId);
+	public UUID addCustomer(UUID businessId, CustomerRequest request) {
+		var companyOpt = businessRepository.findById(businessId);
 		if (companyOpt.isEmpty()) {
-			throw new ServiceResponseException(COMPANY_NOT_FOUND);
+			throw new ServiceResponseException(BUSINESS_NOT_FOUND);
 		}
 
 		var company = companyOpt.get();
@@ -64,13 +64,13 @@ public class CustomerService {
 		Customer newCustomer = null;
 		var storedUser = userRepository.getUserByPhoneNumberAndEmail(request.getPhoneNumber(), request.getEmail());
 		if (storedUser.isPresent()) {
-			newCustomer = Customer.builder().user(storedUser.get()).company(companyOpt.get()).build();
+			newCustomer = Customer.builder().user(storedUser.get()).business(companyOpt.get()).build();
 		} else {
 			var newUser = User.builder().phoneNumber(request.getPhoneNumber()).email(request.getEmail())
 					.fullName(request.getFullName()).isVerified(false).build();
 
 			userRepository.save(newUser);
-			newCustomer = Customer.builder().user(newUser).company(companyOpt.get()).build();
+			newCustomer = Customer.builder().user(newUser).business(companyOpt.get()).build();
 		}
 
 		customerRepository.save(newCustomer);
@@ -78,16 +78,16 @@ public class CustomerService {
 	}
 
 	public CustomerDTO getCustomerByPhoneOrEmail(UUID companyId, CustomerRequest searchRequest) {
-		companyRepository.findById(companyId).orElseThrow(() -> new ServiceResponseException(COMPANY_NOT_FOUND));
+		businessRepository.findById(companyId).orElseThrow(() -> new ServiceResponseException(BUSINESS_NOT_FOUND));
 		var customer = customerRepository.getCustomerByPhoneOrEmail(companyId, searchRequest.getPhoneNumber(),
 				searchRequest.getEmail());
 		return customer.map(this::convertCustomerToDTO).orElse(null);
 	}
 
 	public List<CustomerDTO> getAllCustomers(UUID companyId) {
-		var companyOpt = companyRepository.findById(companyId);
+		var companyOpt = businessRepository.findById(companyId);
 		if (companyOpt.isEmpty()) {
-			throw new ServiceResponseException(COMPANY_NOT_FOUND);
+			throw new ServiceResponseException(BUSINESS_NOT_FOUND);
 		}
 
 		var company = companyOpt.get();
@@ -95,9 +95,9 @@ public class CustomerService {
 	}
 
 	public Boolean deleteCustomer(UUID companyId, CustomerRequest request) {
-		var companyOpt = companyRepository.findById(companyId);
+		var companyOpt = businessRepository.findById(companyId);
 		if (companyOpt.isEmpty()) {
-			throw new ServiceResponseException(COMPANY_NOT_FOUND);
+			throw new ServiceResponseException(BUSINESS_NOT_FOUND);
 		}
 
 		var company = companyOpt.get();
@@ -117,18 +117,18 @@ public class CustomerService {
 		}
 
 		var customer = customerOpt.get();
-		customer.setCompany(null);
+		customer.setBusiness(null);
 		customerRepository.save(customer);
 		company.getCustomers().remove(customer);
-		companyRepository.save(company);
+		businessRepository.save(company);
 		return true;
 	}
 
 	// ToDo: speed performance and reduce ORM overhead
 	public CustomerOverviewDTO getCustomerAppointmentOverview(UUID customerId, UUID companyId) {
-		var companyOpt = companyRepository.findById(companyId);
+		var companyOpt = businessRepository.findById(companyId);
 		if (companyOpt.isEmpty()) {
-			throw new ServiceResponseException(COMPANY_NOT_FOUND);
+			throw new ServiceResponseException(BUSINESS_NOT_FOUND);
 		}
 
 		var customerOpt = customerRepository.findById(customerId);
@@ -159,9 +159,9 @@ public class CustomerService {
 	}
 
 	public List<CustomerDTO> getCustomerBySearch(UUID companyId, String searchParam) {
-		var companyOpt = companyRepository.findById(companyId);
+		var companyOpt = businessRepository.findById(companyId);
 		if (companyOpt.isEmpty()) {
-			throw new ServiceResponseException(COMPANY_NOT_FOUND);
+			throw new ServiceResponseException(BUSINESS_NOT_FOUND);
 		}
 
 		return customerRepository.findCustomerBySearch(companyId, searchParam);

@@ -29,7 +29,7 @@ public class Customer extends BaseEntity {
 
 	@ManyToOne
 	@ToString.Exclude
-	private Company company;
+	private Business business;
 
 	@ToString.Exclude
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

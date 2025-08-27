@@ -5,6 +5,8 @@ package com.booker_app.backend_service.models;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import com.booker_app.backend_service.models.enums.OperationLevel;
+import com.booker_app.backend_service.models.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,9 +32,11 @@ public class User extends BaseEntity {
 	private String password;
 	private boolean isVerified;
 
+	// Mappings
+
+	// Transient (Persistence)
+	@Transient
 	@Enumerated(EnumType.STRING)
 	@Builder.Default
-	private UserRole userRole = UserRole.CUSTOMER;
-
-	// Mappings
+	private OperationLevel currentOperationLevel = OperationLevel.NONE;
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.booker_app.backend_service.models.enums.ServiceLength;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,7 +35,7 @@ public class Service extends BaseEntity {
 	// Mappings
 	@ManyToOne
 	@ToString.Exclude
-	private Company company;
+	private Business business;
 
 	@ToString.Exclude
 	@ManyToMany(mappedBy = "services", fetch = FetchType.LAZY)

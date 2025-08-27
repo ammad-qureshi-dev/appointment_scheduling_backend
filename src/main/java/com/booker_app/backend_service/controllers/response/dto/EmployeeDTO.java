@@ -5,7 +5,7 @@ package com.booker_app.backend_service.controllers.response.dto;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import com.booker_app.backend_service.models.EmploymentRole;
+import com.booker_app.backend_service.models.enums.EmploymentRole;
 import jakarta.persistence.*;
 import lombok.*;
 

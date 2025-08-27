@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.booker_app.backend_service.models.enums.AppointmentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,7 +36,7 @@ public class Appointment extends BaseEntity {
 	// Mappings
 	@ManyToOne
 	@ToString.Exclude
-	private Company company;
+	private Business business;
 
 	@ManyToOne
 	@ToString.Exclude

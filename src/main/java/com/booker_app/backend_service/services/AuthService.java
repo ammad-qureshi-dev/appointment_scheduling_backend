@@ -4,6 +4,7 @@ package com.booker_app.backend_service.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import com.booker_app.backend_service.configs.JwtConfiguration;
@@ -11,10 +12,11 @@ import com.booker_app.backend_service.controllers.request.LoginRequest;
 import com.booker_app.backend_service.controllers.request.RegistrationRequest;
 import com.booker_app.backend_service.controllers.response.dto.UserProfileDTO;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
-import com.booker_app.backend_service.models.AccountVerificationMethod;
+import com.booker_app.backend_service.models.enums.AccountVerificationMethod;
 import com.booker_app.backend_service.models.User;
-import com.booker_app.backend_service.models.UserRole;
-import com.booker_app.backend_service.repositories.CompanyRepository;
+import com.booker_app.backend_service.models.enums.OperationLevel;
+import com.booker_app.backend_service.models.enums.UserRole;
+import com.booker_app.backend_service.repositories.BusinessRepository;
 import com.booker_app.backend_service.repositories.CustomerRepository;
 import com.booker_app.backend_service.repositories.EmployeeRepository;
 import com.booker_app.backend_service.repositories.UserRepository;
@@ -23,22 +25,22 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 
 import static com.booker_app.backend_service.controllers.response.ResponseType.*;
-import static com.booker_app.backend_service.models.AccountVerificationMethod.EMAIL;
-import static com.booker_app.backend_service.models.AccountVerificationMethod.PHONE;
+import static com.booker_app.backend_service.models.enums.AccountVerificationMethod.EMAIL;
+import static com.booker_app.backend_service.models.enums.AccountVerificationMethod.PHONE;
 import static com.booker_app.backend_service.utils.Constants.Auth.TOKEN;
 
 @Component
 public class AuthService {
 
-	private final CompanyRepository companyRepository;
+	private final BusinessRepository businessRepository;
 	private final EmployeeRepository employeeRepository;
 	private final CustomerRepository customerRepository;
 	private final UserRepository userRepository;
 	private final JwtConfiguration jwtConfiguration;
 
-	public AuthService(CompanyRepository companyRepository, EmployeeRepository employeeRepository,
+	public AuthService(BusinessRepository businessRepository, EmployeeRepository employeeRepository,
 			CustomerRepository customerRepository, UserRepository userRepository, JwtConfiguration jwtConfiguration) {
-		this.companyRepository = companyRepository;
+		this.businessRepository = businessRepository;
 		this.employeeRepository = employeeRepository;
 		this.customerRepository = customerRepository;
 		this.userRepository = userRepository;
@@ -70,7 +72,9 @@ public class AuthService {
 				.orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
 
 		if (loginRequest.isLoginByEmail()) {
-			if (!user.getPassword().equals(loginRequest.getPassword())) {
+			if (Objects.isNull(user.getPassword())) {
+				throw new ServiceResponseException(ACCOUNT_NOT_COMPLETED);
+			} else if (!user.getPassword().equals(loginRequest.getPassword())) {
 				throw new ServiceResponseException(INVALID_CREDENTIALS_PROVIDED);
 			} else if (!user.isVerified()) {
 				// ToDo: send verification email
@@ -86,23 +90,36 @@ public class AuthService {
 		return user.getId();
 	}
 
-	public void switchUserRole(UUID userId, HttpServletResponse response, UserRole role) {
-		var user = userRepository.findById(userId).orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
+	private OperationLevel getEmployeeOperationalLevel(UUID employeeId) {
+		var employee = employeeRepository.findById(employeeId).orElseThrow(() -> new ServiceResponseException(EMPLOYEE_NOT_FOUND));
+		return employee.getMaxOperatingLevel();
+	}
 
-		// Don't save, only for token generation
-		user.setUserRole(role);
+	public void switchUserRole(UUID userId, HttpServletResponse response, UserRole role) {
+		OperationLevel maxOperationLevel;
+
+		// ToDo: add verification if userId exists within the contexts like for employee
+		switch (role) {
+			case OWNER -> maxOperationLevel = OperationLevel.DELETE;
+			case CUSTOMER -> maxOperationLevel = OperationLevel.NONE;
+			case EMPLOYEE -> maxOperationLevel = getEmployeeOperationalLevel(userId);
+			default -> throw new RuntimeException("Role not supported");
+		}
+
+		var user = userRepository.findById(userId).orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
+		user.setCurrentOperationLevel(maxOperationLevel);
 
 		var token = jwtConfiguration.generateToken(user);
 		HttpUtil.addCookie(response, TOKEN, token);
 	}
 
 	public List<UserProfileDTO> getUserProfiles(UUID userId) {
-		var user = userRepository.findById(userId).orElseThrow();
+		var user = userRepository.findById(userId).orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
 		var profiles = new ArrayList<UserProfileDTO>();
 		profiles.add(UserProfileDTO.builder().label(user.getFullName()).contextId(userId)
 				.role(UserRole.CUSTOMER.toString()).build());
 
-		profiles.addAll(companyRepository.getCompanyProfiles(userId).orElseGet(ArrayList::new));
+		profiles.addAll(businessRepository.getBusinessProfiles(userId).orElseGet(ArrayList::new));
 		profiles.addAll(employeeRepository.getEmployeeProfiles(userId).orElseGet(ArrayList::new));
 		return profiles;
 	}

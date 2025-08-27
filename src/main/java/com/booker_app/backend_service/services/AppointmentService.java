@@ -13,7 +13,7 @@ import com.booker_app.backend_service.controllers.response.dto.AppointmentDTO;
 import com.booker_app.backend_service.controllers.response.dto.CustomerDTO;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.models.Appointment;
-import com.booker_app.backend_service.models.AppointmentStatus;
+import com.booker_app.backend_service.models.enums.AppointmentStatus;
 import com.booker_app.backend_service.models.Customer;
 import com.booker_app.backend_service.models.Service;
 import com.booker_app.backend_service.repositories.*;
@@ -26,16 +26,16 @@ public class AppointmentService {
 
 	private final AppointmentRepository appointmentRepository;
 	private final CustomerRepository customerRepository;
-	private final CompanyRepository companyRepository;
+	private final BusinessRepository businessRepository;
 	private final EmployeeRepository employeeRepository;
 	private final ServicesRepository servicesRepository;
 
 	public AppointmentService(AppointmentRepository appointmentRepository, CustomerRepository customerRepository,
-			CompanyRepository companyRepository, EmployeeRepository employeeRepository,
+			BusinessRepository businessRepository, EmployeeRepository employeeRepository,
 			ServicesRepository servicesRepository) {
 		this.appointmentRepository = appointmentRepository;
 		this.customerRepository = customerRepository;
-		this.companyRepository = companyRepository;
+		this.businessRepository = businessRepository;
 		this.employeeRepository = employeeRepository;
 		this.servicesRepository = servicesRepository;
 	}
@@ -50,9 +50,9 @@ public class AppointmentService {
 			throw new ServiceResponseException(APPOINTMENT_DATE_IN_PAST);
 		}
 
-		var companyOpt = companyRepository.findById(companyId);
+		var companyOpt = businessRepository.findById(companyId);
 		if (companyOpt.isEmpty()) {
-			throw new ServiceResponseException(COMPANY_NOT_FOUND);
+			throw new ServiceResponseException(BUSINESS_NOT_FOUND);
 		}
 
 		var customerOpt = customerRepository.findById(customerId);
@@ -78,7 +78,7 @@ public class AppointmentService {
 				request.getServices().stream().map(String::toUpperCase).toList());
 
 		var newAppointment = Appointment.builder().services(services).startTime(request.getStartTime())
-				.endTime(request.getEndTime()).appointmentDate(request.getAppointmentDate()).company(companyOpt.get())
+				.endTime(request.getEndTime()).appointmentDate(request.getAppointmentDate()).business(companyOpt.get())
 				.customer(customerOpt.get()).build();
 
 		appointmentRepository.save(newAppointment);
@@ -86,9 +86,9 @@ public class AppointmentService {
 	}
 
 	public List<AppointmentDTO> getAppointmentsByAppointmentDate(UUID companyId, LocalDate appointmentDate) {
-		var companyOpt = companyRepository.findById(companyId);
+		var companyOpt = businessRepository.findById(companyId);
 		if (companyOpt.isEmpty()) {
-			throw new ServiceResponseException(COMPANY_NOT_FOUND);
+			throw new ServiceResponseException(BUSINESS_NOT_FOUND);
 		}
 
 		if (appointmentDate.isBefore(LocalDate.now())) {
@@ -108,9 +108,9 @@ public class AppointmentService {
 	public Boolean updateAppointment(UUID companyId, UUID appointmentId, UUID customerId, AppointmentRequest request) {
 		var appointment = getAppointmentFromDatabase(appointmentId);
 
-		var companyOpt = companyRepository.findById(companyId);
+		var companyOpt = businessRepository.findById(companyId);
 		if (companyOpt.isEmpty()) {
-			throw new ServiceResponseException(COMPANY_NOT_FOUND);
+			throw new ServiceResponseException(BUSINESS_NOT_FOUND);
 		}
 
 		var appointmentsByDateOpt = appointmentRepository.getAppointmentsByDate(companyId,

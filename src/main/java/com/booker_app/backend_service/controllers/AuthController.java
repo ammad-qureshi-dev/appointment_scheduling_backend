@@ -10,7 +10,7 @@ import com.booker_app.backend_service.controllers.request.RegistrationRequest;
 import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.controllers.response.dto.UserProfileDTO;
-import com.booker_app.backend_service.exceptions.CompanyNameTakenException;
+import com.booker_app.backend_service.exceptions.BusinessNameTakenException;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.models.AccountVerificationMethod;
 import com.booker_app.backend_service.models.UserRole;
@@ -46,7 +46,7 @@ public class AuthController {
 		try {
 			var userId = authService.registerUser(request, response);
 			return getServiceResponse(true, userId, HttpStatus.CREATED, alerts);
-		} catch (CompanyNameTakenException e) {
+		} catch (BusinessNameTakenException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
 			return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
 		}

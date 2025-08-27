@@ -26,7 +26,7 @@ public class JwtConfiguration {
 
 	public String generateToken(User user) {
 		return Jwts.builder().setSubject(user.getEmail()).claim("userId", user.getId())
-				.claim("fullName", user.getFullName()).claim("role", user.getUserRole()).claim("email", user.getEmail())
+				.claim("fullName", user.getFullName()).claim("role", user.getCurrentOperationLevel()).claim("email", user.getEmail())
 				.setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
 				.signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes()).compact();
 	}
@@ -42,5 +42,15 @@ public class JwtConfiguration {
 
 		Claims tokenClaims = parseToken(token);
 		return tokenClaims.getExpiration().before(new Date());
+	}
+
+	public String getClaim(String token, String key) {
+		var claims = parseToken(token);
+
+		if (!claims.containsKey(key)) {
+			throw new RuntimeException(key + " not found in token");
+		}
+
+		return claims.get(key).toString();
 	}
 }

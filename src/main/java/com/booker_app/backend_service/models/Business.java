@@ -13,9 +13,9 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "company", schema = "booker_app")
+@Table(name = "business", schema = "booker_app")
 @EqualsAndHashCode(callSuper = true)
-public class Company extends BaseEntity {
+public class Business extends BaseEntity {
 
 	// Fields
 	@Id
@@ -33,19 +33,19 @@ public class Company extends BaseEntity {
 	private Employee owner;
 
 	@ToString.Exclude
-	@OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Employee> employees;
 
 	@ToString.Exclude
-	@OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Appointment> appointments;
 
 	@ToString.Exclude
-	@OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Customer> customers;
 
 	@ToString.Exclude
-	@OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Service> services;
 
 }

@@ -16,10 +16,10 @@ import org.springframework.stereotype.Repository;
 public interface ServicesRepository extends JpaRepository<Service, UUID> {
 	@Query("""
 			select s from Service s
-			where s.company.id = :companyId
+			where s.business.id = :businessId
 			and upper(s.name) in :services
 			""")
-	List<Service> getServicesByName(@Param("companyId") UUID companyId, @Param("services") List<String> services);
+	List<Service> getServicesByName(@Param("businessId") UUID businessId, @Param("services") List<String> services);
 
 	@Query(value = """
 			select ss.name as name, count(*) as numberOfTimes, ss.price as price, ss.price * count(*) as total
@@ -27,11 +27,11 @@ public interface ServicesRepository extends JpaRepository<Service, UUID> {
 			inner join booker_app.service ss on aass.service_id = ss.id
 			inner join booker_app.appointment aa on aass.appointment_id = aa.id
 			where aa.customer_generated_id = :customerId
-			  and aa.company_id = :companyId
+			  and aa.business_id = :businessId
 			  and aa.appointment_date < now()
 			group by ss.name, ss.price
 			order by total desc
 			""", nativeQuery = true)
-	List<ServiceOverviewDTO> getAppointmentServiceOverview(@Param("companyId") UUID companyId,
+	List<ServiceOverviewDTO> getAppointmentServiceOverview(@Param("businessId") UUID businessId,
 			@Param("customerId") UUID customerId);
 }

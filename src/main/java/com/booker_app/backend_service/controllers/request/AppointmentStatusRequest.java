@@ -2,7 +2,7 @@
 Booker App. */
 package com.booker_app.backend_service.controllers.request;
 
-import com.booker_app.backend_service.models.AppointmentStatus;
+import com.booker_app.backend_service.models.enums.AppointmentStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
