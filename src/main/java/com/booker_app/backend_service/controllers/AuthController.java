@@ -12,8 +12,8 @@ import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.controllers.response.dto.UserProfileDTO;
 import com.booker_app.backend_service.exceptions.BusinessNameTakenException;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
-import com.booker_app.backend_service.models.AccountVerificationMethod;
-import com.booker_app.backend_service.models.UserRole;
+import com.booker_app.backend_service.models.enums.AccountVerificationMethod;
+import com.booker_app.backend_service.models.enums.UserRole;
 import com.booker_app.backend_service.services.AuthService;
 import com.booker_app.backend_service.services.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -65,13 +65,13 @@ public class AuthController {
 		}
 	}
 
-	@PostMapping("/switch-role/{userId}/{role}")
-	private ResponseEntity<ServiceResponse<UUID>> switchRole(@PathVariable UUID userId, HttpServletResponse response,
+	@PostMapping("/switch-role/{contextId}/{role}")
+	private ResponseEntity<ServiceResponse<UUID>> switchRole(@PathVariable UUID contextId, HttpServletResponse response,
 			@PathVariable UserRole role) {
 		var alerts = serviceResponse.getAlerts();
 		try {
-			authService.switchUserRole(userId, response, role);
-			return getServiceResponse(true, userId, HttpStatus.OK, alerts);
+			authService.switchUserRole(contextId, response, role);
+			return getServiceResponse(true, contextId, HttpStatus.OK, alerts);
 		} catch (ServiceResponseException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
 			return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
