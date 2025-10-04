@@ -46,10 +46,10 @@ public class AuthController {
 		try {
 			var userId = authService.registerUser(request, response);
 			return getServiceResponse(true, userId, HttpStatus.CREATED, alerts);
-		} catch (BusinessNameTakenException e) {
+		} catch (BusinessNameTakenException | ServiceResponseException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
-			return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
 		}
+		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
 	}
 
 	@PostMapping("/login")

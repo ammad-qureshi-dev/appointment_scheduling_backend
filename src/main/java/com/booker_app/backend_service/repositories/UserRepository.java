@@ -22,4 +22,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
 	@Query("select U from User U where (U.phoneNumber is not null and U.phoneNumber = :phoneNumber) or (U.email is not null and U.email = :email)")
 	Optional<User> getUserByPhoneNumberAndEmail(@Param("phoneNumber") String phoneNumber, @Param("email") String email);
+
+	@Query("select U from User U where U.id = :userId")
+	Optional<User> getUserById(@Param("userId") UUID userId);
 }

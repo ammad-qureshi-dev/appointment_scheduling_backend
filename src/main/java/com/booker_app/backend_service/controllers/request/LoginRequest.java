@@ -2,6 +2,7 @@
 Booker App. */
 package com.booker_app.backend_service.controllers.request;
 
+import com.booker_app.backend_service.models.enums.LoginMethod;
 import lombok.*;
 
 @Data
@@ -14,5 +15,5 @@ public class LoginRequest {
 
 	// Password should be encrypted prior to reaching BE layer
 	@NonNull private String password;
-	private boolean loginByEmail;
+	private LoginMethod loginMethod;
 }

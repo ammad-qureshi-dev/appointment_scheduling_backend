@@ -25,8 +25,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 
 import static com.booker_app.backend_service.controllers.response.ResponseType.*;
-import static com.booker_app.backend_service.models.enums.AccountVerificationMethod.EMAIL;
-import static com.booker_app.backend_service.models.enums.AccountVerificationMethod.PHONE;
+import static com.booker_app.backend_service.models.enums.LoginMethod.EMAIL;
+import static com.booker_app.backend_service.models.enums.LoginMethod.PHONE;
 import static com.booker_app.backend_service.utils.Constants.Auth.TOKEN;
 
 @Component
@@ -71,7 +71,7 @@ public class AuthService {
 		var user = userRepository.getUserByPhoneNumberAndEmail(loginRequest.getPhoneNumber(), loginRequest.getEmail())
 				.orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
 
-		if (loginRequest.isLoginByEmail()) {
+		if (EMAIL.equals(loginRequest.getLoginMethod())) {
 			if (Objects.isNull(user.getPassword())) {
 				throw new ServiceResponseException(ACCOUNT_NOT_COMPLETED);
 			} else if (!user.getPassword().equals(loginRequest.getPassword())) {
