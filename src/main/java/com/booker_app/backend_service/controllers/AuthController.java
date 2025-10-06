@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.booker_app.backend_service.controllers.response.ServiceResponse.getServiceResponse;
 import static com.booker_app.backend_service.utils.CommonUtils.generateResponseData;
-import static com.booker_app.backend_service.utils.Constants.Endpoints.BASE_URL_V1;
+import static com.booker_app.backend_service.utils.Constants.Endpoints.BASE_URL;
 
 @RestController
-@RequestMapping(BASE_URL_V1 + "/auth")
+@RequestMapping(BASE_URL + "/v1/auth")
 public class AuthController {
 
 	private final AuthService authService;
