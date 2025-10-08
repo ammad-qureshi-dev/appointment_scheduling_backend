@@ -101,7 +101,6 @@ public class AuthController {
 		return getServiceResponse(true, null, HttpStatus.INTERNAL_SERVER_ERROR, alerts);
 	}
 
-
 	@PostMapping("/switch-role/{contextId}/{role}")
 	private ResponseEntity<ServiceResponse<UUID>> switchRole(@PathVariable UUID contextId, HttpServletResponse response,
 			@PathVariable UserRole role) {
