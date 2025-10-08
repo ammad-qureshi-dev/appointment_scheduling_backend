@@ -3,12 +3,15 @@ Booker App. */
 package com.booker_app.backend_service.models;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-import com.booker_app.backend_service.models.enums.OperationLevel;
-import com.booker_app.backend_service.models.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Data
 @Entity
@@ -17,7 +20,7 @@ import lombok.*;
 @AllArgsConstructor
 @Table(name = "user", schema = "booker_app")
 @EqualsAndHashCode(callSuper = true)
-public class User extends BaseEntity {
+public class User extends BaseEntity implements UserDetails {
 
 	// Fields
 	@Id
@@ -32,11 +35,17 @@ public class User extends BaseEntity {
 	private String password;
 	private boolean isVerified;
 
-	// Mappings
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of();
+	}
 
-	// Transient (Persistence)
-	@Transient
-	@Enumerated(EnumType.STRING)
-	@Builder.Default
-	private OperationLevel currentOperationLevel = OperationLevel.NONE;
+	@Override
+	public String getUsername() {
+		if (!Objects.isNull(getEmail())) {
+			return getEmail();
+		}
+
+		return getPhoneNumber();
+	}
 }
