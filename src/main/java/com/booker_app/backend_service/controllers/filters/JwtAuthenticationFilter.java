@@ -24,7 +24,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import static com.booker_app.backend_service.utils.Constants.Auth.AUTH_HEADER;
 import static com.booker_app.backend_service.utils.Constants.Auth.BEARER;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -35,8 +34,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
 			@NonNull FilterChain filterChain) throws ServletException, IOException {
-
-		log.debug("Running jwt filter...");
 
 		final String authHeader = request.getHeader(AUTH_HEADER);
 		final String jwt;
@@ -63,8 +60,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 			}
 		}
-
-		log.debug("jwt filter completed...");
 
 		filterChain.doFilter(request, response);
 	}
