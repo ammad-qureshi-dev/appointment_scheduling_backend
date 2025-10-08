@@ -4,15 +4,13 @@ package com.booker_app.backend_service.controllers.response;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -30,11 +28,23 @@ public class ServiceResponse<T> implements Serializable {
 	private List<ResponseData> alerts = new ArrayList<>();
 
 	public static <T> ResponseEntity<ServiceResponse<T>> getServiceResponse(boolean isSuccess, T data,
+			HttpStatus httpStatus, HttpHeaders headers, List<ResponseData> alerts) {
+
+		var serviceResponse = ServiceResponse.<T>builder().isSuccess(isSuccess).data(data).requestId(UUID.randomUUID())
+				.requestCompletedAt(LocalDateTime.now()).alerts(alerts).build();
+
+		return new ResponseEntity<>(serviceResponse, headers, httpStatus);
+	}
+
+	public static <T> ResponseEntity<ServiceResponse<T>> getServiceResponse(boolean isSuccess, T data,
 			HttpStatus httpStatus) {
 		var serviceResponse = ServiceResponse.<T>builder().isSuccess(isSuccess).data(data).requestId(UUID.randomUUID())
 				.requestCompletedAt(LocalDateTime.now()).build();
 
-		return new ResponseEntity<>(serviceResponse, httpStatus);
+		var headers = new HttpHeaders();
+		headers.add(HttpHeaders.SET_COOKIE, null);
+
+		return new ResponseEntity<>(serviceResponse, headers, httpStatus);
 	}
 
 	public static <T> ResponseEntity<ServiceResponse<T>> getServiceResponse(boolean isSuccess, T data,

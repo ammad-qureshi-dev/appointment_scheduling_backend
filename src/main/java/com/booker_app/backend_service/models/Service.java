@@ -3,7 +3,6 @@ Booker App. */
 package com.booker_app.backend_service.models;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +38,6 @@ public class Service extends BaseEntity {
 
 	@ToString.Exclude
 	@ManyToMany(mappedBy = "services", fetch = FetchType.LAZY)
-	private List<Appointment> appointments = new ArrayList<>();
+	private List<Appointment> appointments;
 
 }

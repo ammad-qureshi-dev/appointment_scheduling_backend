@@ -10,28 +10,29 @@ import com.booker_app.backend_service.controllers.request.RegistrationRequest;
 import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.controllers.response.dto.UserProfileDTO;
-import com.booker_app.backend_service.exceptions.BusinessNameTakenException;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.models.enums.AccountVerificationMethod;
 import com.booker_app.backend_service.models.enums.UserRole;
 import com.booker_app.backend_service.services.AuthService;
 import com.booker_app.backend_service.services.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static com.booker_app.backend_service.controllers.response.ServiceResponse.getServiceResponse;
 import static com.booker_app.backend_service.utils.CommonUtils.generateResponseData;
-import static com.booker_app.backend_service.utils.Constants.Endpoints.BASE_URL_V1;
+import static com.booker_app.backend_service.utils.Constants.Endpoints.BASE_URL;
 
 @RestController
-@RequestMapping(BASE_URL_V1 + "/auth")
+@RequestMapping(BASE_URL + "/v1/auth")
 public class AuthController {
 
 	private final AuthService authService;
 	private final ServiceResponse<?> serviceResponse;
 	private final UserService userService;
+	private static final String NO_TOKEN_COOKIE_HEADER = "token=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=None";
 
 	public AuthController(AuthService authService, ServiceResponse<?> serviceResponse, UserService userService) {
 		this.authService = authService;
@@ -40,30 +41,66 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<ServiceResponse<UUID>> registerUser(@RequestBody RegistrationRequest request,
-			HttpServletResponse response) {
+	public ResponseEntity<ServiceResponse<UUID>> register(@RequestBody RegistrationRequest request) {
+
 		var alerts = serviceResponse.getAlerts();
+		var headers = new HttpHeaders();
+
 		try {
-			var userId = authService.registerUser(request, response);
-			return getServiceResponse(true, userId, HttpStatus.CREATED, alerts);
-		} catch (BusinessNameTakenException | ServiceResponseException e) {
+			var response = authService.registerV2(request);
+
+			var cookie = authService.setCookie(response.getToken());
+
+			headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
+
+			return getServiceResponse(true, response.getUserId(), HttpStatus.OK, headers, alerts);
+		} catch (ServiceResponseException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
+			headers.add(HttpHeaders.SET_COOKIE, NO_TOKEN_COOKIE_HEADER);
 		}
-		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
+
+		return getServiceResponse(true, null, HttpStatus.INTERNAL_SERVER_ERROR, headers, alerts);
 	}
 
 	@PostMapping("/login")
-	private ResponseEntity<ServiceResponse<UUID>> login(@RequestBody LoginRequest loginRequest,
-			HttpServletResponse response) {
+	public ResponseEntity<ServiceResponse<UUID>> login(@RequestBody LoginRequest request) {
+
 		var alerts = serviceResponse.getAlerts();
+		var headers = new HttpHeaders();
+
 		try {
-			var userId = authService.userLogin(loginRequest, response);
-			return getServiceResponse(true, userId, HttpStatus.OK, alerts);
+			var response = authService.loginV2(request);
+
+			var cookie = authService.setCookie(response.getToken());
+
+			headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
+
+			return getServiceResponse(true, response.getUserId(), HttpStatus.OK, headers, alerts);
 		} catch (ServiceResponseException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
-			return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
+			headers.add(HttpHeaders.SET_COOKIE, NO_TOKEN_COOKIE_HEADER);
 		}
+
+		return getServiceResponse(true, null, HttpStatus.UNAUTHORIZED, headers, alerts);
 	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<ServiceResponse<Object>> logout() {
+		var alerts = serviceResponse.getAlerts();
+
+		try {
+			var headers = new HttpHeaders();
+
+			headers.add(HttpHeaders.SET_COOKIE, NO_TOKEN_COOKIE_HEADER);
+
+			return getServiceResponse(true, null, HttpStatus.OK, headers, alerts);
+		} catch (ServiceResponseException e) {
+			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
+		}
+
+		return getServiceResponse(true, null, HttpStatus.INTERNAL_SERVER_ERROR, alerts);
+	}
+
 
 	@PostMapping("/switch-role/{contextId}/{role}")
 	private ResponseEntity<ServiceResponse<UUID>> switchRole(@PathVariable UUID contextId, HttpServletResponse response,

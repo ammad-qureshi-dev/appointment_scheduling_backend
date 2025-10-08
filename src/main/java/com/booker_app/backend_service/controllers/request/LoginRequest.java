@@ -12,8 +12,6 @@ import lombok.*;
 public class LoginRequest {
 	private String email;
 	private String phoneNumber;
-
-	// Password should be encrypted prior to reaching BE layer
 	@NonNull private String password;
 	private LoginMethod loginMethod;
 }

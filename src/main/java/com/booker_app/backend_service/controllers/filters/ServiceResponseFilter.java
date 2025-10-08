@@ -7,11 +7,17 @@ import java.io.IOException;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Order(2)
+@Component
+@WebFilter(urlPatterns = "/api/v1/*")
 public class ServiceResponseFilter extends OncePerRequestFilter {
 
 	private final ObjectFactory<ServiceResponse<?>> serviceResponseFactory;

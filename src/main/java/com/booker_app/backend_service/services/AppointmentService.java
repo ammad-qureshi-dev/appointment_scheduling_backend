@@ -13,9 +13,9 @@ import com.booker_app.backend_service.controllers.response.dto.AppointmentDTO;
 import com.booker_app.backend_service.controllers.response.dto.CustomerDTO;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.models.Appointment;
-import com.booker_app.backend_service.models.enums.AppointmentStatus;
 import com.booker_app.backend_service.models.Customer;
 import com.booker_app.backend_service.models.Service;
+import com.booker_app.backend_service.models.enums.AppointmentStatus;
 import com.booker_app.backend_service.repositories.*;
 import org.springframework.stereotype.Component;
 

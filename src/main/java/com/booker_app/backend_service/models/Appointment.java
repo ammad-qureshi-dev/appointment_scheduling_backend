@@ -4,7 +4,6 @@ package com.booker_app.backend_service.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +46,6 @@ public class Appointment extends BaseEntity {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "appointment_services", schema = "booker_app", joinColumns = @JoinColumn(name = "appointment_id"), inverseJoinColumns = @JoinColumn(name = "service_id"))
-	private List<Service> services = new ArrayList<>();
+	private List<Service> services;
 
 }

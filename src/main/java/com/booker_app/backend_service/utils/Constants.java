@@ -12,11 +12,13 @@ public class Constants {
 
 		}
 		public static final String TOKEN = "token";
+		public static final String AUTH_HEADER = "Authorization";
+		public static final String BEARER = "Bearer ";
 	}
 
 	public static class Endpoints {
 		Endpoints() {
 		}
-		public static final String BASE_URL_V1 = "/api/v1";
+		public static final String BASE_URL = "/api";
 	}
 }

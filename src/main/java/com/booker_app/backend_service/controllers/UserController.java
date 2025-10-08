@@ -2,11 +2,8 @@
 Booker App. */
 package com.booker_app.backend_service.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-import com.booker_app.backend_service.controllers.response.ResponseData;
 import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.controllers.response.dto.UserDTO;
@@ -18,11 +15,11 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.booker_app.backend_service.controllers.response.ServiceResponse.getServiceResponse;
 import static com.booker_app.backend_service.utils.CommonUtils.generateResponseData;
-import static com.booker_app.backend_service.utils.Constants.Endpoints.BASE_URL_V1;
+import static com.booker_app.backend_service.utils.Constants.Endpoints.BASE_URL;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping(BASE_URL_V1 + "/user")
+@RequestMapping(BASE_URL + "/v1/user")
 public class UserController {
 
 	private final UserService userService;
@@ -30,8 +27,8 @@ public class UserController {
 
 	public UserController(UserService userService, ServiceResponse<?> serviceResponse) {
 		this.userService = userService;
-        this.serviceResponse = serviceResponse;
-    }
+		this.serviceResponse = serviceResponse;
+	}
 
 	@GetMapping("/{userId}")
 	public ResponseEntity<ServiceResponse<UserDTO>> getUserById(@PathVariable UUID userId) {
