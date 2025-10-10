@@ -15,6 +15,7 @@ import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.services.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static com.booker_app.backend_service.controllers.response.ServiceResponse.getServiceResponse;
@@ -23,6 +24,7 @@ import static com.booker_app.backend_service.utils.Constants.Endpoints.BASE_URL;
 
 @RestController
 @RequestMapping(BASE_URL + "/v1/employee")
+@PreAuthorize("hasRole('ROLE_EMPLOYEE')")
 public class EmployeeController {
 
 	private final EmployeeService employeeService;

@@ -1,4 +1,4 @@
-/* (C) 2025
+/* (C) 2025 
 Booker App. */
 package com.booker_app.backend_service.configs;
 
@@ -26,17 +26,11 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/auth/login", "/api/v1/auth/register",
-								"/api/v1/auth/logout",
-								"/swagger-ui/**",
-								"/v3/api-docs/**",
-								"/swagger-ui.html",
-								"/swagger-ui/**",
-								"/v3/api-docs/**",
-								"/v3/api-docs.yaml",
-								"/swagger-resources/**"
-						).permitAll().anyRequest()
-						.authenticated())
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/logout",
+								"/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**",
+								"/v3/api-docs/**", "/v3/api-docs.yaml", "/swagger-resources/**")
+						.permitAll().anyRequest().authenticated())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider)
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -1,3 +1,5 @@
+/* (C) 2025 
+Booker App. */
 package com.booker_app.backend_service.configs;
 
 import io.swagger.v3.oas.models.Components;
@@ -12,16 +14,11 @@ import static com.booker_app.backend_service.utils.Constants.Auth.TOKEN;
 @Configuration
 public class OpenApiConfig {
 
-    @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .components(new Components()
-                        .addSecuritySchemes("JWT_COOKIE",
-                                new SecurityScheme()
-                                        .type(SecurityScheme.Type.APIKEY)
-                                        .in(SecurityScheme.In.COOKIE)
-                                        .name(TOKEN)
-                        ))
-                .addSecurityItem(new SecurityRequirement().addList("JWT_COOKIE"));
-    }
+	@Bean
+	public OpenAPI customOpenAPI() {
+		return new OpenAPI()
+				.components(new Components().addSecuritySchemes("JWT_COOKIE",
+						new SecurityScheme().type(SecurityScheme.Type.APIKEY).in(SecurityScheme.In.COOKIE).name(TOKEN)))
+				.addSecurityItem(new SecurityRequirement().addList("JWT_COOKIE"));
+	}
 }

@@ -1,4 +1,4 @@
-/* (C) 2025
+/* (C) 2025 
 Booker App. */
 package com.booker_app.backend_service.controllers.filters;
 
@@ -71,10 +71,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String path = request.getServletPath();
 
 		// Skip JWT check for Swagger/OpenAPI
-		return path.startsWith("/v3/api-docs")
-				|| path.startsWith("/swagger-ui")
-				|| path.startsWith("/swagger-resources")
-				|| path.equals("/swagger-ui.html")
+		return path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")
+				|| path.startsWith("/swagger-resources") || path.equals("/swagger-ui.html")
 				|| path.equals("/api/v1/auth/me");
 	}
 }

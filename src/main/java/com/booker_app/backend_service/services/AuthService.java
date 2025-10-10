@@ -3,9 +3,6 @@ Booker App. */
 package com.booker_app.backend_service.services;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import com.booker_app.backend_service.controllers.request.LoginRequest;
@@ -13,17 +10,13 @@ import com.booker_app.backend_service.controllers.request.RegistrationRequest;
 import com.booker_app.backend_service.controllers.response.AuthenticationResponse;
 import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
-import com.booker_app.backend_service.controllers.response.dto.UserProfileDTO;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.models.User;
 import com.booker_app.backend_service.models.enums.AuthMethod;
-import com.booker_app.backend_service.models.enums.OperationLevel;
-import com.booker_app.backend_service.models.enums.UserRole;
 import com.booker_app.backend_service.repositories.BusinessRepository;
 import com.booker_app.backend_service.repositories.CustomerRepository;
 import com.booker_app.backend_service.repositories.EmployeeRepository;
 import com.booker_app.backend_service.repositories.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
@@ -51,83 +44,6 @@ public class AuthService {
 
 	@Value("${booking-service.secureCookies}")
 	private boolean secureCookies;
-
-	public UUID registerUser(RegistrationRequest request, HttpServletResponse response) {
-		var userResult = userRepository.getUserByEmail(request.getEmail());
-		if (userResult.isPresent()) {
-			throw new ServiceResponseException(USER_ALREADY_EXISTS);
-		}
-
-		var newUser = User.builder().email(request.getEmail()).password(request.getPassword())
-				.dateOfBirth(request.getDateOfBirth()).fullName(request.getFullName())
-				.phoneNumber(request.getPhoneNumber()).build();
-
-		userRepository.save(newUser);
-
-		// ToDo: send verification email
-
-		return newUser.getId();
-	}
-
-	public UUID userLogin(LoginRequest loginRequest, HttpServletResponse response) {
-		var user = userRepository.getUserByPhoneNumberAndEmail(loginRequest.getPhoneNumber(), loginRequest.getEmail())
-				.orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
-
-		if (EMAIL.equals(loginRequest.getLoginMethod())) {
-			if (Objects.isNull(user.getPassword())) {
-				throw new ServiceResponseException(ACCOUNT_NOT_COMPLETED);
-			} else if (!user.getPassword().equals(loginRequest.getPassword())) {
-				throw new ServiceResponseException(INVALID_CREDENTIALS_PROVIDED);
-			} else if (!user.isVerified()) {
-				// ToDo: send verification email
-				throw new ServiceResponseException(ACCOUNT_NOT_VERIFIED);
-			}
-		} else {
-			// ToDo: add OTP here
-			throw new ServiceResponseException(NOT_IMPLEMENTED_YET);
-		}
-
-		return user.getId();
-	}
-
-	private OperationLevel getEmployeeOperationalLevel(UUID employeeId) {
-		var employee = employeeRepository.findById(employeeId)
-				.orElseThrow(() -> new ServiceResponseException(EMPLOYEE_NOT_FOUND));
-		return employee.getMaxOperatingLevel();
-	}
-
-	public AuthenticationResponse switchUserRole(UUID userId, UUID contextId, UserRole role) {
-		var user = userRepository.findById(userId).orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
-
-		// Verify context exists
-		switch (role) {
-			// ToDo:
-			// case OWNER -> businessRepository.;
-			case CUSTOMER -> customerRepository.findById(contextId)
-					.orElseThrow(() -> new ServiceResponseException(CUSTOMER_NOT_FOUND));
-			case EMPLOYEE -> employeeRepository.findById(contextId)
-					.orElseThrow(() -> new ServiceResponseException(EMPLOYEE_NOT_FOUND));
-			default -> throw new RuntimeException("Role not supported");
-		}
-
-		user.setUserRole(role);
-		user.setLastUsedContext(contextId);
-		userRepository.save(user);
-
-		var token = jwtService.generateToken(user);
-		return AuthenticationResponse.builder().token(token).userId(contextId).build();
-	}
-
-	public List<UserProfileDTO> getUserProfiles(UUID userId) {
-		var user = userRepository.findById(userId).orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
-		var profiles = new ArrayList<UserProfileDTO>();
-		profiles.add(UserProfileDTO.builder().label(user.getFullName()).contextId(userId)
-				.role(UserRole.CUSTOMER.toString()).build());
-
-		profiles.addAll(businessRepository.getBusinessProfiles(userId).orElseGet(ArrayList::new));
-		profiles.addAll(employeeRepository.getEmployeeProfiles(userId).orElseGet(ArrayList::new));
-		return profiles;
-	}
 
 	public boolean verifyAccount(UUID userId, AuthMethod method) {
 		var user = userRepository.findById(userId).orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
@@ -193,7 +109,7 @@ public class AuthService {
 		return AuthenticationResponse.builder().token(token).userId(user.getId()).build();
 	}
 
-	public ResponseCookie setCookie(String token) {
+	public ResponseCookie generateCookie(String token) {
 		return ResponseCookie.from("token", token).httpOnly(true).secure(secureCookies).path("/")
 				.maxAge(Duration.ofHours(1)).sameSite("Strict").build();
 	}
