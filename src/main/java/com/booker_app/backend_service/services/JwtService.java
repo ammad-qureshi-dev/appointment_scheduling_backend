@@ -3,9 +3,7 @@ Booker App. */
 package com.booker_app.backend_service.services;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 import com.booker_app.backend_service.models.User;
@@ -23,6 +21,11 @@ public class JwtService {
 
 	@Value("${JWT_AUTHENTICATION_SECRET}")
 	private String SECRET_KEY;
+
+	public UUID extractUserId(String token) {
+		String id = extractClaim(token, claims -> claims.get("userId", String.class));
+		return id != null ? UUID.fromString(id) : null;
+	}
 
 	public String extractUsername(String token) {
 		return extractClaim(token, Claims::getSubject);

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.booker_app.backend_service.models.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,10 +35,18 @@ public class User extends BaseEntity implements UserDetails {
 	private LocalDate dateOfBirth;
 	private String password;
 	private boolean isVerified;
+	private UUID lastUsedContext;
+
+	@Transient
+	private UserRole userRole;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of();
+		if (userRole == null) {
+			return List.of();
+		}
+
+		return List.of(() -> "ROLE_" + userRole.name());
 	}
 
 	@Override

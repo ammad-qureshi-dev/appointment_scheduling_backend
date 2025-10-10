@@ -14,6 +14,7 @@ public class Constants {
 		public static final String TOKEN = "token";
 		public static final String AUTH_HEADER = "Authorization";
 		public static final String BEARER = "Bearer ";
+		public static final String NO_TOKEN_COOKIE_HEADER = "token=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=None";
 	}
 
 	public static class Endpoints {
