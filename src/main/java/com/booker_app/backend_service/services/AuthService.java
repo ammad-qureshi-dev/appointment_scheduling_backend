@@ -16,7 +16,7 @@ import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.controllers.response.dto.UserProfileDTO;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.models.User;
-import com.booker_app.backend_service.models.enums.AccountVerificationMethod;
+import com.booker_app.backend_service.models.enums.AuthMethod;
 import com.booker_app.backend_service.models.enums.OperationLevel;
 import com.booker_app.backend_service.models.enums.UserRole;
 import com.booker_app.backend_service.repositories.BusinessRepository;
@@ -32,8 +32,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import static com.booker_app.backend_service.controllers.response.ResponseType.*;
-import static com.booker_app.backend_service.models.enums.LoginMethod.EMAIL;
-import static com.booker_app.backend_service.models.enums.LoginMethod.PHONE;
+import static com.booker_app.backend_service.models.enums.AuthMethod.EMAIL;
+import static com.booker_app.backend_service.models.enums.AuthMethod.PHONE;
 import static com.booker_app.backend_service.utils.CommonUtils.generateResponseData;
 
 @Component
@@ -96,18 +96,26 @@ public class AuthService {
 		return employee.getMaxOperatingLevel();
 	}
 
-	public void switchUserRole(UUID userId, HttpServletResponse response, UserRole role) {
-		OperationLevel maxOperationLevel;
+	public AuthenticationResponse switchUserRole(UUID userId, UUID contextId, UserRole role) {
+		var user = userRepository.findById(userId).orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
 
-		// ToDo: add verification if userId exists within the contexts like for employee
+		// Verify context exists
 		switch (role) {
-			case OWNER -> maxOperationLevel = OperationLevel.DELETE;
-			case CUSTOMER -> maxOperationLevel = OperationLevel.NONE;
-			case EMPLOYEE -> maxOperationLevel = getEmployeeOperationalLevel(userId);
+			// ToDo:
+			// case OWNER -> businessRepository.;
+			case CUSTOMER -> customerRepository.findById(contextId)
+					.orElseThrow(() -> new ServiceResponseException(CUSTOMER_NOT_FOUND));
+			case EMPLOYEE -> employeeRepository.findById(contextId)
+					.orElseThrow(() -> new ServiceResponseException(EMPLOYEE_NOT_FOUND));
 			default -> throw new RuntimeException("Role not supported");
 		}
 
-		var user = userRepository.findById(userId).orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
+		user.setUserRole(role);
+		user.setLastUsedContext(contextId);
+		userRepository.save(user);
+
+		var token = jwtService.generateToken(user);
+		return AuthenticationResponse.builder().token(token).userId(contextId).build();
 	}
 
 	public List<UserProfileDTO> getUserProfiles(UUID userId) {
@@ -121,9 +129,14 @@ public class AuthService {
 		return profiles;
 	}
 
-	public boolean verifyAccount(UUID userId, AccountVerificationMethod method) {
+	public boolean verifyAccount(UUID userId, AuthMethod method) {
 		var user = userRepository.findById(userId).orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
-		if (EMAIL.equals(method)) {
+
+		if (user.isVerified()) {
+			throw new ServiceResponseException(USER_ALREADY_VERIFIED);
+		}
+
+		if (method.equals(EMAIL)) {
 			user.setVerified(true);
 			userRepository.save(user);
 			return true;
@@ -184,5 +197,4 @@ public class AuthService {
 		return ResponseCookie.from("token", token).httpOnly(true).secure(secureCookies).path("/")
 				.maxAge(Duration.ofHours(1)).sameSite("Strict").build();
 	}
-
 }

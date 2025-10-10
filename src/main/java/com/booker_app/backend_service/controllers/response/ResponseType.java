@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 public enum ResponseType {
-	ACCOUNT_NOT_COMPLETED(
+	USER_ALREADY_VERIFIED("User already verified"), ACCOUNT_NOT_COMPLETED(
 			"Account was created, but not completed. Please create a new password and verify your account"), NOT_IMPLEMENTED_YET(
 					"This function/service has not been implemented yet"), ACCOUNT_NOT_VERIFIED(
 							"Sorry, please verify this account"), INVALID_CREDENTIALS_PROVIDED(
