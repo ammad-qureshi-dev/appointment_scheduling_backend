@@ -40,7 +40,7 @@ public class UserService {
 
 		var user = userOpt.get();
 		return UserDTO.builder().email(user.getEmail()).fullName(user.getFullName()).phoneNumber(user.getPhoneNumber())
-				.userId(userId).build();
+				.userId(userId).lastSignedInAs(user.getUserRole()).build();
 	}
 
 	public AuthenticationResponse switchUserRole(UUID userId, UUID contextId, UserRole role) {
@@ -50,11 +50,10 @@ public class UserService {
 		switch (role) {
 			// ToDo:
 			// case OWNER -> businessRepository.;
-			case CUSTOMER -> customerRepository.findById(contextId)
-					.orElseThrow(() -> new ServiceResponseException(CUSTOMER_NOT_FOUND));
+//			case CUSTOMER -> customerRepository.findById(contextId)
+//					.orElseThrow(() -> new ServiceResponseException(CUSTOMER_NOT_FOUND));
 			case EMPLOYEE -> employeeRepository.findById(contextId)
 					.orElseThrow(() -> new ServiceResponseException(EMPLOYEE_NOT_FOUND));
-			default -> throw new RuntimeException("Role not supported");
 		}
 
 		user.setUserRole(role);

@@ -37,10 +37,11 @@ public class UserController {
 	private final AuthService authService;
 	private final JwtService jwtService;
 
-	@GetMapping("/{userId}")
-	public ResponseEntity<ServiceResponse<UserDTO>> getUserById(@PathVariable UUID userId) {
+	@GetMapping("/me")
+	public ResponseEntity<ServiceResponse<UserDTO>> getMe(@CookieValue("token") String token) {
 		var alerts = serviceResponse.getAlerts();
 		try {
+			var userId = jwtService.extractUserId(token);
 			var user = userService.getUserById(userId);
 			return getServiceResponse(true, user, HttpStatus.OK);
 		} catch (ServiceResponseException e) {
