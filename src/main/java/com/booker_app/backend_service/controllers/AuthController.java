@@ -9,9 +9,8 @@ import com.booker_app.backend_service.controllers.request.RegistrationRequest;
 import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
-import com.booker_app.backend_service.models.enums.AuthMethod;
+import com.booker_app.backend_service.models.enums.ContactMethod;
 import com.booker_app.backend_service.services.AuthService;
-import com.booker_app.backend_service.services.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
@@ -31,12 +30,10 @@ public class AuthController {
 
 	private final AuthService authService;
 	private final ServiceResponse<?> serviceResponse;
-	private final JwtService jwtService;
 
-	public AuthController(AuthService authService, ServiceResponse<?> serviceResponse, JwtService jwtService) {
+	public AuthController(AuthService authService, ServiceResponse<?> serviceResponse) {
 		this.authService = authService;
 		this.serviceResponse = serviceResponse;
-		this.jwtService = jwtService;
 	}
 
 	@PostMapping("/register")
@@ -96,7 +93,7 @@ public class AuthController {
 	@PostMapping("/verify-account/{userId}")
 	@Operation(description = "Post-registration operation, verifies user's account based on the authentication method")
 	public ResponseEntity<ServiceResponse<Boolean>> verifyAccount(@PathVariable UUID userId,
-			@RequestParam AuthMethod method) {
+			@RequestParam ContactMethod method) {
 		var alerts = serviceResponse.getAlerts();
 		try {
 			var isVerified = authService.verifyAccount(userId, method);

@@ -50,8 +50,8 @@ public class UserService {
 		switch (role) {
 			// ToDo:
 			// case OWNER -> businessRepository.;
-//			case CUSTOMER -> customerRepository.findById(contextId)
-//					.orElseThrow(() -> new ServiceResponseException(CUSTOMER_NOT_FOUND));
+			// case CUSTOMER -> customerRepository.findById(contextId)
+			// .orElseThrow(() -> new ServiceResponseException(CUSTOMER_NOT_FOUND));
 			case EMPLOYEE -> employeeRepository.findById(contextId)
 					.orElseThrow(() -> new ServiceResponseException(EMPLOYEE_NOT_FOUND));
 		}

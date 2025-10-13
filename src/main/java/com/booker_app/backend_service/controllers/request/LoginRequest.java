@@ -2,7 +2,7 @@
 Booker App. */
 package com.booker_app.backend_service.controllers.request;
 
-import com.booker_app.backend_service.models.enums.AuthMethod;
+import com.booker_app.backend_service.models.enums.ContactMethod;
 import lombok.*;
 
 @Data
@@ -13,5 +13,5 @@ public class LoginRequest {
 	private String email;
 	private String phoneNumber;
 	@NonNull private String password;
-	private AuthMethod loginMethod;
+	private ContactMethod loginMethod;
 }

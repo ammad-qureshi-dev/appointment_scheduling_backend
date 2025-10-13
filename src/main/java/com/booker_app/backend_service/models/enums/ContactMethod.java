@@ -2,6 +2,6 @@
 Booker App. */
 package com.booker_app.backend_service.models.enums;
 
-public enum AuthMethod {
+public enum ContactMethod {
 	PHONE, EMAIL
 }
