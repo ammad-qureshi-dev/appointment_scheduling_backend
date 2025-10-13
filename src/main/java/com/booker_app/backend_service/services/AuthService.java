@@ -3,8 +3,10 @@ Booker App. */
 package com.booker_app.backend_service.services;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.UUID;
 
+import com.booker_app.backend_service.controllers.request.CommsRequest;
 import com.booker_app.backend_service.controllers.request.LoginRequest;
 import com.booker_app.backend_service.controllers.request.RegistrationRequest;
 import com.booker_app.backend_service.controllers.response.AuthenticationResponse;
@@ -41,6 +43,10 @@ public class AuthService {
 	private final JwtService jwtService;
 	private final AuthenticationManager authenticationManager;
 	private final ServiceResponse<?> serviceResponse;
+	private final CommunicationService communicationService;
+
+	@Value("${CLIENT_URL}")
+	private String CLIENT_URL;
 
 	@Value("${booking-service.secureCookies}")
 	private boolean secureCookies;
@@ -49,7 +55,7 @@ public class AuthService {
 		var user = userRepository.findById(userId).orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
 
 		if (user.isVerified()) {
-			throw new ServiceResponseException(USER_ALREADY_VERIFIED);
+			return true;
 		}
 
 		if (method.equals(EMAIL)) {
@@ -78,6 +84,19 @@ public class AuthService {
 		userRepository.save(user);
 
 		var token = jwtService.generateToken(user);
+
+		if (!Objects.isNull(user.getEmail())) {
+
+			var verificationLink = CLIENT_URL + "/auth/verify-account/" + user.getId();
+
+			var commsRequest = CommsRequest.builder()
+					.commsType(EMAIL)
+					.recipient(user.getEmail())
+					.subject("Verify Email")
+					.messageContent("Verify your account here: " + verificationLink)
+					.build();
+			communicationService.sendCommunication(EMAIL, commsRequest);
+		}
 
 		return AuthenticationResponse.builder().token(token).userId(user.getId()).build();
 	}
