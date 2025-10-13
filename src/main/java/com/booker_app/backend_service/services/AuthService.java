@@ -89,12 +89,8 @@ public class AuthService {
 
 			var verificationLink = CLIENT_URL + "/auth/verify-account/" + user.getId();
 
-			var commsRequest = CommsRequest.builder()
-					.commsType(EMAIL)
-					.recipient(user.getEmail())
-					.subject("Verify Email")
-					.messageContent("Verify your account here: " + verificationLink)
-					.build();
+			var commsRequest = CommsRequest.builder().commsType(EMAIL).recipient(user.getEmail())
+					.subject("Verify Email").messageContent("Verify your account here: " + verificationLink).build();
 			communicationService.sendCommunication(EMAIL, commsRequest);
 		}
 
