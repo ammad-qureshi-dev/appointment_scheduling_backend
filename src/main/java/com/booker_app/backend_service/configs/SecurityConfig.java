@@ -3,6 +3,7 @@ Booker App. */
 package com.booker_app.backend_service.configs;
 
 import com.booker_app.backend_service.controllers.filters.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +34,18 @@ public class SecurityConfig {
 						.permitAll().anyRequest().authenticated())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider)
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).exceptionHandling(
+						exceptions -> exceptions.authenticationEntryPoint((request, response, authException) -> {
+							response.setContentType("application/json");
+							response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+							response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+							response.setHeader("Access-Control-Allow-Credentials", "true");
+						}).accessDeniedHandler((request, response, accessDeniedException) -> {
+							response.setContentType("application/json");
+							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+							response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+							response.setHeader("Access-Control-Allow-Credentials", "true");
+						}));
 
 		return http.build();
 	}
