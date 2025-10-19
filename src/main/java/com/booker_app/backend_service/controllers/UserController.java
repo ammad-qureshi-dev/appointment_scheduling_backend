@@ -68,7 +68,7 @@ public class UserController {
 		}
 	}
 
-	@GetMapping("/user-profiles")
+	@GetMapping("/profiles")
 	@Operation(description = "Post-login operation, retrieves all profiles user has, like multiple business or jobs")
 	public ResponseEntity<ServiceResponse<List<UserProfileDTO>>> getUserProfiles(@CookieValue(TOKEN) String token) {
 		var alerts = serviceResponse.getAlerts();
@@ -76,6 +76,21 @@ public class UserController {
 			var userId = jwtService.extractUserId(token);
 			var profiles = userService.getUserProfiles(userId);
 			return getServiceResponse(true, profiles, HttpStatus.OK);
+		} catch (ServiceResponseException e) {
+			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.WARNING));
+			return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);
+		}
+	}
+
+	@GetMapping("/profiles/current")
+	@Operation(description = "Retrieves the current logged in profile")
+	public ResponseEntity<ServiceResponse<UserProfileDTO>> getCurrentProfile(@CookieValue(TOKEN) String token) {
+		var alerts = serviceResponse.getAlerts();
+		try {
+			var userId = jwtService.extractUserId(token);
+			var contextId = jwtService.extractContextId(token);
+			var currentProfile = userService.getCurrentProfile(userId, contextId);
+			return getServiceResponse(true, currentProfile, HttpStatus.OK);
 		} catch (ServiceResponseException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.WARNING));
 			return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);

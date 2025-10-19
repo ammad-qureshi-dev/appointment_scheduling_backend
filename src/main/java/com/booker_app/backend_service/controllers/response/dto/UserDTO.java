@@ -19,5 +19,7 @@ public class UserDTO {
 	private String email;
 	private String phoneNumber;
 	private UUID userId;
+	private UUID contextId;
 	private UserRole lastSignedInAs;
+	private boolean isVerified;
 }

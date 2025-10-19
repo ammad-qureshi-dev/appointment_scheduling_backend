@@ -4,6 +4,7 @@ package com.booker_app.backend_service.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import com.booker_app.backend_service.controllers.response.AuthenticationResponse;
@@ -40,7 +41,8 @@ public class UserService {
 
 		var user = userOpt.get();
 		return UserDTO.builder().email(user.getEmail()).fullName(user.getFullName()).phoneNumber(user.getPhoneNumber())
-				.userId(userId).lastSignedInAs(user.getUserRole()).build();
+				.userId(userId).lastSignedInAs(user.getLastSignedInAs()).contextId(user.getLastUsedContext())
+				.isVerified(user.isVerified()).build();
 	}
 
 	public AuthenticationResponse switchUserRole(UUID userId, UUID contextId, UserRole role) {
@@ -56,7 +58,7 @@ public class UserService {
 					.orElseThrow(() -> new ServiceResponseException(EMPLOYEE_NOT_FOUND));
 		}
 
-		user.setUserRole(role);
+		user.setLastSignedInAs(role);
 		user.setLastUsedContext(contextId);
 		userRepository.save(user);
 
@@ -73,6 +75,32 @@ public class UserService {
 		profiles.addAll(businessRepository.getBusinessProfiles(userId).orElseGet(ArrayList::new));
 		profiles.addAll(employeeRepository.getEmployeeProfiles(userId).orElseGet(ArrayList::new));
 		return profiles;
+	}
+
+	public UserProfileDTO getCurrentProfile(UUID userId, UUID contextId) {
+		// Validate if user exists
+		userRepository.findById(userId).orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
+
+		var userProfiles = getUserProfiles(userId);
+		var currentProfile = userProfiles.stream().filter(e -> e.getContextId().equals(contextId)).findFirst();
+		return currentProfile.orElseThrow(() -> new RuntimeException("Profile Not Found"));
+
+	}
+
+	private boolean profileExists(UserRole role, UUID contextId) {
+		if (UserRole.CUSTOMER == role) {
+			var value = customerRepository.findById(contextId)
+					.orElseThrow(() -> new ServiceResponseException(CUSTOMER_NOT_FOUND));
+			return Objects.nonNull(value);
+		} else if (UserRole.EMPLOYEE == role) {
+			var value = employeeRepository.findById(contextId)
+					.orElseThrow(() -> new ServiceResponseException(EMPLOYEE_NOT_FOUND));
+			return Objects.nonNull(value);
+		} else if (UserRole.OWNER == role) {
+			throw new RuntimeException("Not implemented for role = " + role);
+		}
+
+		throw new RuntimeException("Role " + role + " does not exist");
 	}
 
 }

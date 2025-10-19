@@ -37,16 +37,16 @@ public class User extends BaseEntity implements UserDetails {
 	private boolean isVerified;
 	private UUID lastUsedContext;
 
-	@Transient
-	private UserRole userRole;
+	@Enumerated(EnumType.STRING)
+	private UserRole lastSignedInAs;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		if (userRole == null) {
+		if (lastSignedInAs == null) {
 			return List.of();
 		}
 
-		return List.of(() -> "ROLE_" + userRole.name());
+		return List.of(() -> "ROLE_" + lastSignedInAs.name());
 	}
 
 	@Override

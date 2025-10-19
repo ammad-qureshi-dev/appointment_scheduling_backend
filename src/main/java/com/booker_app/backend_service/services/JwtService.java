@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import com.booker_app.backend_service.models.User;
+import com.booker_app.backend_service.models.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -25,6 +26,23 @@ public class JwtService {
 	public UUID extractUserId(String token) {
 		String id = extractClaim(token, claims -> claims.get("userId", String.class));
 		return id != null ? UUID.fromString(id) : null;
+	}
+
+	public UUID extractContextId(String token) {
+		var id = extractClaim(token, claims -> claims.get("contextId", String.class));
+		return id != null ? UUID.fromString(id) : null;
+	}
+
+	public UserRole extractRole(String token) {
+		var role = extractClaim(token, claims -> claims.get("role", String.class));
+
+		if (Objects.isNull(role)) {
+			return UserRole.CUSTOMER;
+		}
+
+		var sanitizedValue = role.substring(4);
+
+		return UserRole.valueOf(sanitizedValue);
 	}
 
 	public String extractUsername(String token) {
@@ -49,7 +67,8 @@ public class JwtService {
 		var extraClaims = new HashMap<String, Object>();
 
 		extraClaims.put("userId", userDetails.getId());
-		extraClaims.put("role", "ROLE_" + userDetails.getUserRole());
+		extraClaims.put("role", "ROLE_" + userDetails.getLastSignedInAs());
+		extraClaims.put("contextId", userDetails.getLastUsedContext());
 
 		return generateToken(extraClaims, userDetails);
 	}
