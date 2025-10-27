@@ -9,7 +9,6 @@ import com.booker_app.backend_service.controllers.request.RegistrationRequest;
 import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
-import com.booker_app.backend_service.models.enums.ContactMethod;
 import com.booker_app.backend_service.services.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -92,12 +91,11 @@ public class AuthController {
 
 	@PostMapping("/verify-account/{userId}")
 	@Operation(description = "Post-registration operation, verifies user's account based on the authentication method")
-	public ResponseEntity<ServiceResponse<Boolean>> verifyAccount(@PathVariable UUID userId,
-			@RequestParam ContactMethod method) {
+	public ResponseEntity<ServiceResponse<Boolean>> verifyAccount(@PathVariable UUID userId) {
 		var alerts = serviceResponse.getAlerts();
 		try {
-			var isVerified = authService.verifyAccount(userId, method);
-			return getServiceResponse(true, isVerified, HttpStatus.OK);
+			authService.verifyAccount(userId);
+			return getServiceResponse(true, true, HttpStatus.OK);
 		} catch (ServiceResponseException e) {
 			alerts.add(generateResponseData(e.getMessage(), ResponseSeverity.ERROR));
 			return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, alerts);

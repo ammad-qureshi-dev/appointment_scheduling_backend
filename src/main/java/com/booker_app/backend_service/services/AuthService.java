@@ -14,7 +14,6 @@ import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.models.User;
-import com.booker_app.backend_service.models.enums.ContactMethod;
 import com.booker_app.backend_service.repositories.BusinessRepository;
 import com.booker_app.backend_service.repositories.CustomerRepository;
 import com.booker_app.backend_service.repositories.EmployeeRepository;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Component;
 
 import static com.booker_app.backend_service.controllers.response.ResponseType.*;
 import static com.booker_app.backend_service.models.enums.ContactMethod.EMAIL;
-import static com.booker_app.backend_service.models.enums.ContactMethod.PHONE;
 import static com.booker_app.backend_service.utils.CommonUtils.generateResponseData;
 
 @Component
@@ -51,23 +49,15 @@ public class AuthService {
 	@Value("${booking-service.secureCookies}")
 	private boolean secureCookies;
 
-	public boolean verifyAccount(UUID userId, ContactMethod method) {
+	public void verifyAccount(UUID userId) {
 		var user = userRepository.findById(userId).orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
 
 		if (user.isVerified()) {
-			return true;
+			return;
 		}
 
-		if (method.equals(EMAIL)) {
-			user.setVerified(true);
-			userRepository.save(user);
-			return true;
-		} else if (PHONE.equals(method)) {
-			// ToDo: implement account verification via OTP
-			throw new ServiceResponseException(NOT_IMPLEMENTED_YET);
-		}
-
-		return false;
+		user.setVerified(true);
+		userRepository.save(user);
 	}
 
 	public AuthenticationResponse registerV2(RegistrationRequest request) {
