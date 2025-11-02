@@ -69,7 +69,7 @@ public class AuthService {
 
 		var user = User.builder().email(request.getEmail()).password(passwordEncoder.encode(request.getPassword()))
 				.dateOfBirth(request.getDateOfBirth()).fullName(request.getFullName())
-				.phoneNumber(request.getPhoneNumber()).build();
+				.phoneNumber(request.getPhoneNumber()).lastSignedInAs(UserRole.CUSTOMER).build();
 
 		userRepository.save(user);
 
@@ -78,15 +78,6 @@ public class AuthService {
 	}
 
 	public AuthenticationResponse loginV2(LoginRequest request) {
-
-		String username;
-
-		if (request.getLoginMethod() == EMAIL) {
-			username = request.getEmail();
-		} else {
-			username = request.getPhoneNumber();
-		}
-
 		var findUserResult = userRepository.getUserByPhoneNumberAndEmail(request.getPhoneNumber(), request.getEmail());
 		User user = null;
 
@@ -105,6 +96,7 @@ public class AuthService {
 			alerts.add(generateResponseData(String.valueOf(ACCOUNT_NOT_VERIFIED), ResponseSeverity.WARNING));
 		}
 
+		// On first login attempt,
 		if (Objects.isNull(user.getLastSignedInAs()) || Objects.isNull(user.getLastUsedContext())) {
 			user.setLastSignedInAs(UserRole.CUSTOMER);
 			user.setLastUsedContext(user.getId());

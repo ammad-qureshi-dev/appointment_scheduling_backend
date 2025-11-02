@@ -65,11 +65,9 @@ public class JwtService {
 
 	public String generateToken(User userDetails) {
 		var extraClaims = new HashMap<String, Object>();
-
 		extraClaims.put("userId", userDetails.getId());
-		extraClaims.put("role", "ROLE_" + userDetails.getLastSignedInAs());
+		extraClaims.put("role", "ROLE_" + userDetails.getLastSignedInAs().name());
 		extraClaims.put("contextId", userDetails.getLastUsedContext());
-
 		return generateToken(extraClaims, userDetails);
 	}
 
@@ -92,5 +90,4 @@ public class JwtService {
 		byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
-
 }
