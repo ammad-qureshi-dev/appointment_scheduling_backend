@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.booker_app.backend_service.models.enums.EmploymentRole;
 import com.booker_app.backend_service.models.enums.OperationLevel;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class Employee extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID generatedId;
 
+	@Deprecated(forRemoval = true)
 	@Enumerated(EnumType.STRING)
 	private EmploymentRole role;
 
@@ -36,5 +38,6 @@ public class Employee extends BaseEntity {
 
 	@ManyToOne
 	@ToString.Exclude
+	@JsonBackReference
 	private Business business;
 }

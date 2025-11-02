@@ -16,7 +16,7 @@ public enum ResponseType {
 															"User already exists"), SERVICE_ALREADY_EXISTS(
 																	"Service already exists"), CANNOT_REMOVE_OWNER(
 																			"User has role-type of OWNER, cannot remove"), USER_NOT_FOUND(
-																					"User not found"), UNREGISTERED_USER_EMAIL(
+																					"User not found or does not exist"), UNREGISTERED_USER_EMAIL(
 																							"User's email not registered"), EMPLOYEE_NOT_FOUND(
 																									"Employee not found"), EMPLOYEE_EMAIL_ALREADY_EXISTS(
 																											"An employee already exists with this email"), INVALID_APPOINTMENT_REQUEST_TIME(

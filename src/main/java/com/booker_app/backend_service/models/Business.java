@@ -5,6 +5,7 @@ package com.booker_app.backend_service.models;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,6 +35,7 @@ public class Business extends BaseEntity {
 
 	@ToString.Exclude
 	@OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference
 	private List<Employee> employees;
 
 	@ToString.Exclude

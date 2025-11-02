@@ -42,4 +42,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
 			""", nativeQuery = true)
 
 	Optional<List<UserProfileDTO>> getEmployeeProfiles(@Param("userId") UUID userId);
+
+	Optional<Employee> findByUserId(UUID userId);
 }

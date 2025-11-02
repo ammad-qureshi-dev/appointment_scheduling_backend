@@ -82,8 +82,14 @@ public class UserService {
 		userRepository.findById(userId).orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
 
 		var userProfiles = getUserProfiles(userId);
+
+		if (Objects.isNull(contextId)) {
+			return userProfiles.stream().filter(e -> e.getRole().equals(UserRole.CUSTOMER.toString())).findFirst()
+					.orElseThrow(() -> new RuntimeException("No Role Found"));
+		}
+
 		var currentProfile = userProfiles.stream().filter(e -> e.getContextId().equals(contextId)).findFirst();
-		return currentProfile.orElseThrow(() -> new RuntimeException("Profile Not Found"));
+		return currentProfile.orElseThrow(() -> new RuntimeException("Role not found with contextId: " + contextId));
 
 	}
 

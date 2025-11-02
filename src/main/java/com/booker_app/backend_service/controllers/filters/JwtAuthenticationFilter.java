@@ -70,9 +70,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getServletPath();
 
-		// Skip JWT check for Swagger/OpenAPI
 		return path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")
 				|| path.startsWith("/swagger-resources") || path.equals("/swagger-ui.html")
-				|| path.equals("/api/v1/auth/me");
+				|| path.equals("/api/v1/auth/me") || path.equals("/api/v1/auth/login")
+				|| path.equals("/api/v1/auth/register");
 	}
 }

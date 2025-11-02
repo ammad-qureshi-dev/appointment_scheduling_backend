@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.booker_app.backend_service.controllers.response.dto.BusinessDTO;
 import com.booker_app.backend_service.controllers.response.dto.UserProfileDTO;
 import com.booker_app.backend_service.models.Business;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,7 +24,7 @@ public interface BusinessRepository extends JpaRepository<Business, UUID> {
 			select
 				C.name as label,
 				'OWNER' as role,
-				E.generated_id as contextId
+				C.id as contextId
 			from booker_app.Business C
 			inner join booker_app.Employee E
 			on C.owner_generated_id = E.generated_id
@@ -32,5 +33,16 @@ public interface BusinessRepository extends JpaRepository<Business, UUID> {
 			where U.id = :userId
 			""", nativeQuery = true)
 	Optional<List<UserProfileDTO>> getBusinessProfiles(@Param("userId") UUID userId);
+
+	@Query(value = """
+			select
+				b.name,
+				b.phone_number,
+				b.email,
+				b.description,
+				b.address
+			from booker_app.business b
+			where b.id = :businessId""", nativeQuery = true)
+	Optional<BusinessDTO> findBusinessById(@Param("businessId") UUID businessId);
 
 }

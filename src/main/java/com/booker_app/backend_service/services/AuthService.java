@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 
-import com.booker_app.backend_service.controllers.request.CommsRequest;
 import com.booker_app.backend_service.controllers.request.LoginRequest;
 import com.booker_app.backend_service.controllers.request.RegistrationRequest;
 import com.booker_app.backend_service.controllers.response.AuthenticationResponse;
@@ -14,6 +13,7 @@ import com.booker_app.backend_service.controllers.response.ResponseSeverity;
 import com.booker_app.backend_service.controllers.response.ServiceResponse;
 import com.booker_app.backend_service.exceptions.ServiceResponseException;
 import com.booker_app.backend_service.models.User;
+import com.booker_app.backend_service.models.enums.UserRole;
 import com.booker_app.backend_service.repositories.BusinessRepository;
 import com.booker_app.backend_service.repositories.CustomerRepository;
 import com.booker_app.backend_service.repositories.EmployeeRepository;
@@ -74,16 +74,6 @@ public class AuthService {
 		userRepository.save(user);
 
 		var token = jwtService.generateToken(user);
-
-		if (!Objects.isNull(user.getEmail())) {
-
-			var verificationLink = CLIENT_URL + "/auth/verify-account/" + user.getId();
-
-			var commsRequest = CommsRequest.builder().commsType(EMAIL).recipient(user.getEmail())
-					.subject("Verify Email").messageContent("Verify your account here: " + verificationLink).build();
-			communicationService.sendCommunication(EMAIL, commsRequest);
-		}
-
 		return AuthenticationResponse.builder().token(token).userId(user.getId()).build();
 	}
 
@@ -97,8 +87,14 @@ public class AuthService {
 			username = request.getPhoneNumber();
 		}
 
-		var user = userRepository.getUserByPhoneNumberAndEmail(request.getPhoneNumber(), request.getEmail())
-				.orElseThrow(() -> new ServiceResponseException(USER_NOT_FOUND));
+		var findUserResult = userRepository.getUserByPhoneNumberAndEmail(request.getPhoneNumber(), request.getEmail());
+		User user = null;
+
+		if (findUserResult.isPresent()) {
+			user = findUserResult.get();
+		} else {
+			throw new ServiceResponseException(USER_NOT_FOUND);
+		}
 
 		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
 			throw new ServiceResponseException(INVALID_CREDENTIALS_PROVIDED);
@@ -107,6 +103,12 @@ public class AuthService {
 		if (!user.isVerified()) {
 			var alerts = serviceResponse.getAlerts();
 			alerts.add(generateResponseData(String.valueOf(ACCOUNT_NOT_VERIFIED), ResponseSeverity.WARNING));
+		}
+
+		if (Objects.isNull(user.getLastSignedInAs()) || Objects.isNull(user.getLastUsedContext())) {
+			user.setLastSignedInAs(UserRole.CUSTOMER);
+			user.setLastUsedContext(user.getId());
+			userRepository.save(user);
 		}
 
 		var token = jwtService.generateToken(user);

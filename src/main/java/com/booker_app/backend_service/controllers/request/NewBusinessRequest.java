@@ -10,6 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 public class NewBusinessRequest {
 	@NonNull private String name;
-	@NonNull private String address;
+	private String address;
+	private String phoneNumber;
+	private String email;
 	private String description;
 }
