@@ -45,7 +45,7 @@ public class ServicesController {
 		return getServiceResponse(false, null, HttpStatus.BAD_REQUEST, responseData);
 	}
 
-	@GetMapping("/{businessId}/search")
+	@GetMapping("/{businessId}")
 	public ResponseEntity<ServiceResponse<List<ServiceDTO>>> getAllServices(@PathVariable UUID businessId) {
 		try {
 			var services = servicesService.getAllServices(businessId);

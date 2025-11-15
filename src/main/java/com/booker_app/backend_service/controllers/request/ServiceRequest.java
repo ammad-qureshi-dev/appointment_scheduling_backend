@@ -17,4 +17,5 @@ public class ServiceRequest {
 	@NonNull private BigDecimal price;
 	@NonNull private Integer time;
 	@NonNull private ServiceLength serviceLength;
+	private boolean isNew;
 }

@@ -26,7 +26,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import static com.booker_app.backend_service.controllers.response.ResponseType.*;
-import static com.booker_app.backend_service.models.enums.ContactMethod.EMAIL;
 import static com.booker_app.backend_service.utils.CommonUtils.generateResponseData;
 
 @Component
