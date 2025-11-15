@@ -29,6 +29,11 @@ public class Service extends BaseEntity {
 
 	// 1 HOUR, 25 MINUTES, etc
 	private Integer time;
+
+	@Transient
+	private boolean isNew;
+
+	@Enumerated(EnumType.STRING)
 	private ServiceLength serviceLength;
 
 	// Mappings
